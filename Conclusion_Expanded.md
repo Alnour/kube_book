@@ -18,7 +18,9 @@ Kubernetes is best understood not as a single product, but as the culmination of
 
 *   From **Google's operational experience (2008)**, it learned the most critical lesson of all: at scale, **Hardware Failure is the Norm**. This understanding is why Kubernetes was built as a self-healing control plane that assumes chaos and treats servers as disposable "cattle," not precious "pets."
 
-By weaving these threads together, Kubernetes has become the de facto **Distributed Operating System of the 21st Century**. It provides a unified, abstract layer that makes a cluster of hundreds or thousands of unreliable computers look and feel like a single, resilient, and powerful machine.
+*   From the **Operator pattern and CRDs**, it learned the final lesson: a platform is only as powerful as its ability to be **extended**. By letting anyone define new resource types (CRDs), encode domain expertise into custom controllers (Operators), enforce custom rules (Admission Webhooks), and package it all for distribution (Helm), Kubernetes opened itself up so that the entire community could teach it new tricks. This extensibility is what transformed it from a container orchestrator into a **platform for building platforms**.
+
+By weaving these threads together, Kubernetes has become the de facto **Distributed Operating System of the 21st Century**. It provides a unified, abstract layer that makes a cluster of hundreds or thousands of unreliable computers look and feel like a single, resilient, and powerful machine. And crucially, it is a machine that anyone can extend—a living ecosystem that grows not just through core development, but through the collective expertise of its community.
 
 ---
 
@@ -51,7 +53,7 @@ eBPF is supercharging Kubernetes networking, security, and observability.
 
 ### The Enduring Abstraction
 
-The journey from Dijkstra's layers to eBPF's programmable kernel shows that while technology is always changing, the fundamental goals remain the same: managing complexity, abstracting away messy details, and creating reliable systems from unreliable parts. Kubernetes is the current pinnacle of this 50-year evolution, proving that while individual servers may fail, the abstract systems we build upon them can be designed to endure. The quest continues.
+The journey from Dijkstra's layers to Operators to eBPF's programmable kernel shows that while technology is always changing, the fundamental goals remain the same: managing complexity, abstracting away messy details, and creating reliable systems from unreliable parts. Kubernetes is the current pinnacle of this 50-year evolution, proving that while individual servers may fail, the abstract systems we build upon them can be designed to endure—and to grow, as anyone with domain expertise can extend the platform with new capabilities. The quest continues.
 
 ---
 ## References
