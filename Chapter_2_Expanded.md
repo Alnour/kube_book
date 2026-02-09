@@ -34,6 +34,47 @@ This design brilliantly solved the problems of the monolith:
 *   **Reliability:** In a microkernel system, that buggy printer driver is just another user-space program. If it crashes, it doesn't affect the core kernel. The system can simply restart the driver process, and the rest of the operating system (your network, your other applications) continues to run smoothly.
 *   **Flexibility:** Since system services are just regular programs, you can stop, start, update, or replace them on the fly without ever rebooting the machine. You could, for example, switch from one networking stack to another by simply stopping one process and starting another.
 
+```mermaid
+graph TB
+    subgraph Monolithic["Monolithic Kernel"]
+        MK_App["User Applications"]
+        subgraph MK_Kernel["Kernel Space (privileged)"]
+            MK_Sched["Scheduler"]
+            MK_Mem["Memory Mgmt"]
+            MK_FS["File System"]
+            MK_Net["Networking"]
+            MK_Drv["Device Drivers"]
+        end
+        MK_HW["Hardware"]
+        MK_App --> MK_Kernel --> MK_HW
+    end
+
+    subgraph Micro["Microkernel"]
+        subgraph MU_User["User Space"]
+            MU_App["User Applications"]
+            MU_FS["FS Server"]
+            MU_Net["Net Server"]
+            MU_Drv["Driver Server"]
+        end
+        subgraph MU_Kernel["Microkernel (minimal)"]
+            MU_IPC["IPC"]
+            MU_Mem["Memory"]
+            MU_Sched["Scheduling"]
+        end
+        MU_HW["Hardware"]
+        MU_App <-->|IPC| MU_FS
+        MU_App <-->|IPC| MU_Net
+        MU_FS <-->|IPC| MU_Drv
+        MU_User --> MU_Kernel --> MU_HW
+    end
+
+    style MK_Kernel fill:#e74c3c,color:#fff
+    style MU_Kernel fill:#27ae60,color:#fff
+    style MU_User fill:#2980b9,color:#fff
+```
+
+**Figure 2.1:** Monolithic kernel vs. microkernel. In the monolith, all services share privileged kernel space — one crash can bring everything down. In the microkernel, only minimal functions remain in kernel space; everything else runs as isolated user-space servers communicating via IPC.
+
 Of course, the microkernel approach had its critics. The main argument against it was **performance**. In a monolith, when the application needs to write a file, it makes a single, fast "system call" to the kernel. In a microkernel, the application has to send a message (an IPC call) to the file system server, which might then send a message to the disk driver server. Critics argued this message-passing would be too slow. Liedtke's great achievement with his **L4 microkernel** was to prove them wrong. He engineered the IPC mechanism to be so incredibly fast that the performance penalty was almost negligible, proving that modularity and reliability didn't have to come at the cost of speed.
 
 ---
@@ -52,7 +93,40 @@ The **microservices** approach solves this by applying the microkernel philosoph
 *   A `reviews-service`
 *   A `user-interface-service`
 
-Each service runs in its own process, completely isolated from the others. They communicate with each other over the network. Now, if the `billing-service` crashes, the other services remain online. Customers can still browse products and read reviews; they just might not be able to complete a purchase until the service restarts.
+Each service runs in its own process, completely isolated from the others. They communicate with each other over the network. Now, if the `billing-service` crashes, the other services remain online.
+
+```mermaid
+graph TB
+    subgraph Monolith["Monolith Application"]
+        M_UI["UI"]
+        M_Cat["Catalog"]
+        M_Cart["Cart"]
+        M_Bill["Billing 💥"]
+        M_Rev["Reviews"]
+        M_UI --- M_Cat --- M_Cart --- M_Bill --- M_Rev
+        M_Crash["Billing crash = ENTIRE APP DOWN"]
+    end
+
+    subgraph Microservices["Microservices Application"]
+        S_UI["UI Service ✓"]
+        S_Cat["Catalog Service ✓"]
+        S_Cart["Cart Service ✓"]
+        S_Bill["Billing Service 💥"]
+        S_Rev["Reviews Service ✓"]
+        S_UI <-->|network| S_Cat
+        S_UI <-->|network| S_Cart
+        S_UI <-->|network| S_Bill
+        S_UI <-->|network| S_Rev
+        S_OK["Billing crash = only billing affected"]
+    end
+
+    style Monolith fill:#e74c3c,color:#fff
+    style M_Bill fill:#c0392b,color:#fff
+    style Microservices fill:#27ae60,color:#fff
+    style S_Bill fill:#e74c3c,color:#fff
+```
+
+**Figure 2.2:** Monolith vs. microservices. In the monolith, a billing crash kills the entire application. In microservices, only the billing service is affected — all other services remain online. Customers can still browse products and read reviews; they just might not be able to complete a purchase until the service restarts.
 
 ---
 
@@ -63,6 +137,42 @@ This brings us to the key insight: **Kubernetes is the logical conclusion of the
 *   **The Kubernetes Control Plane is the "Kernel Space":** The core components of Kubernetes—the API Server, Scheduler, and Controller Manager—act as the distributed microkernel. They handle the minimal, essential tasks. They don't run your application's code. They simply manage the lifecycle of your application: scheduling it onto machines, keeping it running, and helping its pieces communicate.
 
 *   **Your Application Pods are the "User Space":** Your actual applications—your web servers, databases, and microservices—run as isolated "user-space processes" called **Pods**. A Pod is completely oblivious to the hardware it's running on. It just knows that it has been given a certain amount of CPU and memory and an IP address, and it communicates with other Pods through the network channels that the Kubernetes "kernel" provides.
+
+```mermaid
+graph TB
+    subgraph UserSpace["'User Space' — Application Pods"]
+        Pod1["Web Server Pod"]
+        Pod2["API Pod"]
+        Pod3["DB Pod"]
+        Pod4["Cache Pod"]
+    end
+
+    subgraph KernelSpace["'Kernel Space' — Kubernetes Control Plane"]
+        API["API Server"]
+        Sched["Scheduler"]
+        CM["Controller Manager"]
+        etcd["etcd"]
+        API <--> Sched
+        API <--> CM
+        API <--> etcd
+    end
+
+    subgraph Nodes["Physical / Virtual Nodes"]
+        N1["Node 1"]
+        N2["Node 2"]
+        N3["Node 3"]
+    end
+
+    Pod1 & Pod2 --> API
+    Pod3 & Pod4 --> API
+    KernelSpace --> N1 & N2 & N3
+
+    style UserSpace fill:#2980b9,color:#fff
+    style KernelSpace fill:#2c3e50,color:#ecf0f1
+    style Nodes fill:#7f8c8d,color:#fff
+```
+
+**Figure 2.3:** Kubernetes as a distributed microkernel. Application Pods run in "user space," the control plane acts as the minimal "kernel space" (scheduling, state, communication), and physical nodes provide the underlying hardware.
 
 Jochen Liedtke's vision of a robust, flexible, and resilient system built from small, communicating, and independently restartable components has been fully realized, not on a single computer chip, but at the massive scale of the cloud. The "servers" of the microkernel era are the "microservices" of today, and Kubernetes is the minimal, powerful kernel that binds them all together.
 

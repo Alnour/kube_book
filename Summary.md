@@ -3,10 +3,10 @@
 
 - Authors: Alnour Alharin, Nevena Golubovic
 
-## Acknowledgement:
-- To Mark Lemoine, my manager to Oracle for five years of my career, the guy from which I realized the existence of kubernetes, and he gave me the opportunity to explore it and use it to build different applications.
-- To Tony Choe, the guy who I learnt how to utilize OKE to build massive architecture.
-- to Oracle Fusion Observability group, and especially the operations team led by Rob Mize who gave me important practical lessons helped me understand kubernetes.
+## Acknowledgments
+- To Mark Lemoine, my manager at Oracle for five years of my career, who introduced me to Kubernetes and gave me the opportunity to explore it and use it to build different applications.
+- To Tony Choe, who taught me how to utilize OKE to build massive architectures.
+- To the Oracle Fusion Observability group, and especially the operations team led by Rob Mize, who gave me important practical lessons that helped me understand Kubernetes.
 
 ## Introduction: What is Kubernetes and Why Does It Exist?
 
@@ -15,6 +15,29 @@ Have you ever wondered how giant websites like Google, Netflix, or Amazon run mi
 If you think of a data center full of computers (we call them **servers**) as a giant orchestra, Kubernetes is the conductor. It doesn't play an instrument itself, but it makes sure every musician (every application) knows when to play, how loudly, and what to do if they mess up. It makes the whole system work in harmony.
 
 But Kubernetes didn't just appear out of nowhere. It's the result of nearly 50 years of amazing ideas in computer science. To truly understand Kubernetes, we need to take a short trip back in time and see how these ideas grew and came together. This book will be your simple guide on that journey.
+
+```mermaid
+graph LR
+    Ch1["<b>Ch 1</b>\nBuilding Blocks\n<i>Layers, Processes,\nVirtualization</i>"]
+    Ch2["<b>Ch 2</b>\nMicro Revolution\n<i>Microkernels,\nMicroservices</i>"]
+    Ch3["<b>Ch 3</b>\nVM Takes Over\n<i>Xen, KVM,\nCloud</i>"]
+    Ch4["<b>Ch 4</b>\nHardware Truth\n<i>Failure at Scale,\nBorg, Omega</i>"]
+    Ch5["<b>Ch 5</b>\nThe Conductor\n<i>Control Loop,\netcd, CAP</i>"]
+    Ch6["<b>Ch 6</b>\nExtensibility\n<i>CRDs, Operators,\nHelm</i>"]
+    Conc["<b>Conclusion</b>\n<i>Wasm, eBPF,\nFuture</i>"]
+
+    Ch1 --> Ch2 --> Ch3 --> Ch4 --> Ch5 --> Ch6 --> Conc
+
+    style Ch1 fill:#2c3e50,color:#ecf0f1
+    style Ch2 fill:#34495e,color:#ecf0f1
+    style Ch3 fill:#2980b9,color:#fff
+    style Ch4 fill:#e74c3c,color:#fff
+    style Ch5 fill:#27ae60,color:#fff
+    style Ch6 fill:#8e44ad,color:#fff
+    style Conc fill:#e67e22,color:#fff
+```
+
+**Figure S.1:** Book roadmap. Each chapter builds on the previous, tracing 50 years of computing ideas — from foundational OS concepts through the cloud revolution to Kubernetes and its extensible future.
 
 ---
 

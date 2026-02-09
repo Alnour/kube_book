@@ -21,6 +21,27 @@ Working on a system called the "THE Multiprogramming System," Dijkstra and his t
 *   **Layer 4: User Programs:** Where the actual applications that users ran would live.
 *   **Layer 5: The Operator:** The user.
 
+```mermaid
+graph TB
+    L5["Layer 5: The Operator (User)"]
+    L4["Layer 4: User Programs"]
+    L3["Layer 3: I/O Buffering"]
+    L2["Layer 2: Console I/O"]
+    L1["Layer 1: Memory Management"]
+    L0["Layer 0: Processor Allocation"]
+
+    L5 --> L4 --> L3 --> L2 --> L1 --> L0
+
+    style L0 fill:#2c3e50,color:#ecf0f1
+    style L1 fill:#34495e,color:#ecf0f1
+    style L2 fill:#7f8c8d,color:#ecf0f1
+    style L3 fill:#95a5a6,color:#2c3e50
+    style L4 fill:#bdc3c7,color:#2c3e50
+    style L5 fill:#ecf0f1,color:#2c3e50
+```
+
+**Figure 1.1:** Dijkstra's THE Multiprogramming System layer stack. Each layer depends only on the layer directly below it — the arrow represents unidirectional dependency.
+
 The golden rule was **unidirectional dependency**. Layer 4 could ask for services from Layer 3, but it had no idea that Layer 2, 1, or 0 even existed. This structure brought enormous benefits:
 
 *   **Testability:** You could test Layer 0 until you were 100% sure it was perfect. Then, while testing Layer 1, you could completely trust that Layer 0 was working correctly. This made it possible to prove, step-by-step, that the entire system was correct.
@@ -29,6 +50,51 @@ The golden rule was **unidirectional dependency**. Layer 4 could ask for service
 #### **How Kubernetes Uses Layers**
 
 This 50-year-old idea is at the very heart of Kubernetes's flexibility. Kubernetes uses a set of interfaces (contracts) that function as layers, separating the *what* from the *how*.
+
+```mermaid
+graph LR
+    subgraph Core["Kubernetes Core"]
+        K8s([Kubernetes Control Plane])
+    end
+
+    subgraph Interfaces["Standard Interfaces"]
+        CSI[CSI - Storage]
+        CNI[CNI - Networking]
+        CRI[CRI - Runtime]
+    end
+
+    subgraph Implementations["Concrete Implementations"]
+        EBS[Amazon EBS]
+        GCE[GCE PD]
+        Ceph[Ceph]
+        Calico[Calico]
+        Flannel[Flannel]
+        Cilium[Cilium]
+        Containerd[containerd]
+        CRIO[CRI-O]
+    end
+
+    K8s --> CSI
+    K8s --> CNI
+    K8s --> CRI
+
+    CSI --> EBS
+    CSI --> GCE
+    CSI --> Ceph
+
+    CNI --> Calico
+    CNI --> Flannel
+    CNI --> Cilium
+
+    CRI --> Containerd
+    CRI --> CRIO
+
+    style Core fill:#326ce5,color:#fff
+    style Interfaces fill:#fff,stroke:#326ce5
+    style Implementations fill:#fff,stroke:#999
+```
+
+**Figure 1.2:** Kubernetes interface layers. The control plane communicates through standard interfaces (CSI, CNI, CRI), which decouple it from concrete implementations — separating the *what* from the *how*.
 
 *   **Container Storage Interface (CSI):** When an application in Kubernetes needs to store data, it just asks for "a piece of storage." It doesn't know or care if that storage is a super-fast SSD on the server, a network drive, or a cloud volume from Amazon or Google. The CSI layer handles the details.
 *   **Container Network Interface (CNI):** Every workload (Pod) in Kubernetes needs an IP address to communicate. Kubernetes doesn't handle this directly. It passes the job to the CNI layer. This allows different networking solutions (like Calico, Flannel, or Cilium) to plug into Kubernetes seamlessly.
@@ -52,6 +118,37 @@ Modern Linux containers take this idea to a whole new level using two powerful t
     *   **Network Namespace:** The container gets its own virtual network card and IP address, separate from the host.
 
 2.  **Control Groups (cgroups):** This is the resource management side of containers. While namespaces give a container its own world, `cgroups` ensures it doesn't get too greedy. It's like putting a process on a budget. You can tell a container, "You are only allowed to use 1 CPU core and 2GB of RAM." This prevents a single buggy or malicious container from crashing the entire server by consuming all its resources.
+
+```mermaid
+graph TB
+    subgraph Container_A["Container A"]
+        PID_A["PID Namespace\n(sees PID 1)"]
+        MNT_A["Mount Namespace\n(private filesystem)"]
+        NET_A["Network Namespace\n(own IP address)"]
+        CG_A["cgroup Budget\nCPU: 1 core | RAM: 2GB"]
+    end
+
+    subgraph Container_B["Container B"]
+        PID_B["PID Namespace\n(sees PID 1)"]
+        MNT_B["Mount Namespace\n(private filesystem)"]
+        NET_B["Network Namespace\n(own IP address)"]
+        CG_B["cgroup Budget\nCPU: 0.5 core | RAM: 1GB"]
+    end
+
+    subgraph Host["Host Machine"]
+        Kernel["Shared Linux Kernel"]
+    end
+
+    Container_A --> Kernel
+    Container_B --> Kernel
+
+    style Host fill:#2c3e50,color:#ecf0f1
+    style Kernel fill:#2c3e50,color:#ecf0f1
+    style Container_A fill:#2980b9,color:#fff
+    style Container_B fill:#27ae60,color:#fff
+```
+
+**Figure 1.3:** Container anatomy. Each container gets isolated namespaces (PID, Mount, Network) and a cgroup resource budget, while sharing the host's Linux kernel.
 
 So, a **container** is essentially a standard Linux process that has been given its own private, virtualized world using **namespaces**, and put on a resource budget using **cgroups**.
 
@@ -80,6 +177,43 @@ However, by breaking this rule, containers gain a massive advantage: **Efficienc
 For years, this has been the fundamental trade-off:
 *   **VMs:** Slower and heavier, but offer very strong security and isolation.
 *   **Containers:** Blazingly fast and lightweight, but have weaker isolation because they share the host kernel.
+
+```mermaid
+graph TB
+    subgraph VM_Stack["Virtual Machine"]
+        VM_App["Application"]
+        VM_Libs["Libraries / Bins"]
+        VM_Guest["Guest OS (full kernel)"]
+        VM_Hyp["Hypervisor"]
+        VM_HW["Hardware"]
+        VM_App --> VM_Libs --> VM_Guest --> VM_Hyp --> VM_HW
+    end
+
+    subgraph Container_Stack["Container"]
+        C_App["Application"]
+        C_Libs["Libraries / Bins"]
+        C_Runtime["Container Runtime"]
+        C_Host["Host OS (shared kernel)"]
+        C_HW["Hardware"]
+        C_App --> C_Libs --> C_Runtime --> C_Host --> C_HW
+    end
+
+    subgraph Kata_Stack["Kata Container (Hybrid)"]
+        K_App["Application"]
+        K_Libs["Libraries / Bins"]
+        K_MicroVM["Lightweight Micro-VM"]
+        K_Hyp["Hypervisor"]
+        K_Host["Host OS"]
+        K_HW["Hardware"]
+        K_App --> K_Libs --> K_MicroVM --> K_Hyp --> K_Host --> K_HW
+    end
+
+    style VM_Stack fill:#e74c3c,color:#fff
+    style Container_Stack fill:#2980b9,color:#fff
+    style Kata_Stack fill:#8e44ad,color:#fff
+```
+
+**Figure 1.4:** Side-by-side comparison of VMs, Containers, and Kata Containers. VMs include a full guest OS and hypervisor; containers share the host kernel for speed; Kata Containers combine both — wrapping containers in a lightweight micro-VM for strong isolation with near-container performance.
 
 Excitingly, this distinction is now blurring. Modern technologies like **Kata Containers** are combining the best of both worlds. They wrap a standard container inside a highly optimized, lightweight VM. This provides the strong, hardware-enforced security of a VM while keeping much of the speed and flexibility of a container. And Kubernetes, true to its layered design, is evolving to manage both traditional containers and these new "sandboxed containers" seamlessly.
 

@@ -44,6 +44,26 @@ For example, you could create a CRD called `MySQLCluster`. Once you register thi
 
 The CRD doesn't do anything by itself—it just extends the API Server's vocabulary. But this is a crucial first step. Think back to Chapter 2's microkernel philosophy. If Kubernetes is a distributed operating system, CRDs are like installing new **device drivers**. They teach the OS about new hardware (or in this case, new concepts) that it didn't know about when it was first installed. The API Server from Chapter 4, which we described as the front door of the building, now has a new type of visitor it can recognize and process.
 
+```mermaid
+sequenceDiagram
+    participant Admin
+    participant API as API Server
+    participant etcd
+
+    Admin->>API: Register CRD (MySQLCluster schema)
+    API->>etcd: Store CRD definition
+    API-->>Admin: CRD registered ✓
+    Note over API: API Server now understands "MySQLCluster"
+
+    Admin->>API: Create MySQLCluster "my-prod-db"
+    API->>API: Validate against CRD schema
+    API->>etcd: Store custom resource
+    API-->>Admin: MySQLCluster created ✓
+    Note over Admin: kubectl get mysqlclusters now works!
+```
+
+**Figure 6.1:** CRD registration flow. An admin first registers the CRD schema, teaching the API Server a new resource type. Then custom resources of that type can be created, validated, and stored — just like built-in resources.
+
 ---
 
 ### 3. The Operator Pattern: Encoding Human Knowledge Into Software
@@ -80,6 +100,27 @@ Now imagine a replica crashes. A generic Kubernetes controller would blindly res
 *   Check the replication lag of the remaining replica.
 *   Initialize the new replacement Pod with a fresh data snapshot from the primary.
 *   Wait for the new replica to fully sync before marking the cluster as healthy again.
+
+```mermaid
+graph LR
+    Watch["Watch Trigger:\nMySQLCluster created"] --> Primary["Create Primary\nInstance"]
+    Primary --> Snapshot["Take Data\nSnapshot"]
+    Snapshot --> R1["Start Replica 1\n+ Sync"]
+    R1 --> R2["Start Replica 2\n+ Sync"]
+    R2 --> Backup["Create Backup\nCronJob"]
+    Backup --> Steady["Steady State ✓\n(desired = observed)"]
+    Steady -->|"continuous monitoring"| Steady
+
+    Crash["Replica Crash 💥"] --> Resync["Check Replication Lag\n→ Fresh Snapshot\n→ Resync New Pod"]
+    Resync --> Steady
+
+    style Watch fill:#326ce5,color:#fff
+    style Steady fill:#27ae60,color:#fff
+    style Crash fill:#e74c3c,color:#fff
+    style Resync fill:#f39c12,color:#fff
+```
+
+**Figure 6.2:** Operator reconciliation loop for a MySQL cluster. The operator follows domain-specific steps (primary first, then replicas, then backups). On a crash, it performs intelligent recovery — resyncing data rather than blindly restarting.
 
 **This is the key insight:** an Operator captures the expertise of a human operator and runs it as software inside the control loop—24/7, tirelessly, at machine speed. The DBA's years of experience are now codified in a controller that never sleeps, never forgets a step, and can manage hundreds of database clusters simultaneously.
 
@@ -125,6 +166,24 @@ Kubernetes lets you insert your own custom logic into this chain via two types o
 
 Together, Validating and Mutating Webhooks complete the extensibility picture. If we extend the "front door" analogy from Chapter 4: CRDs teach the building about new types of visitors. Operators know how to escort those visitors to where they need to go. And Admission Webhooks are the security guards who check IDs (validate) and hand out visitor badges (mutate) before anyone steps inside.
 
+```mermaid
+graph LR
+    Req["API Request"] --> Auth["Authentication\n& Authorization"]
+    Auth --> Mutating["Mutating\nWebhooks\n(modify request)"]
+    Mutating --> Schema["Schema\nValidation"]
+    Schema --> Validating["Validating\nWebhooks\n(accept/reject)"]
+    Validating --> etcd["etcd\n(stored)"]
+
+    style Req fill:#2c3e50,color:#ecf0f1
+    style Auth fill:#8e44ad,color:#fff
+    style Mutating fill:#2980b9,color:#fff
+    style Schema fill:#7f8c8d,color:#fff
+    style Validating fill:#e67e22,color:#fff
+    style etcd fill:#27ae60,color:#fff
+```
+
+**Figure 6.3:** The admission webhook pipeline. Every API request passes through authentication, mutating webhooks (which can modify the request), schema validation, and validating webhooks (which can reject it) before being persisted to etcd.
+
 ---
 
 ### 6. Helm: Packaging and Sharing the Knowledge
@@ -154,6 +213,25 @@ Let's step back and see how all the pieces fit together.
 2.  **Operators** (Custom Controllers) extend the control loop, encoding domain-specific knowledge about *how* to manage those new concepts.
 3.  **Admission Webhooks** extend the API Server's enforcement, adding custom validation and mutation rules that act as gatekeepers for the entire cluster.
 4.  **Helm** packages all of the above into distributable, versionable, configurable bundles that can be shared across the ecosystem.
+
+```mermaid
+graph TB
+    Helm["🎯 Helm Charts\nPackage & distribute all of the above"]
+    Webhooks["🔒 Admission Webhooks\nEnforce custom rules (validate & mutate)"]
+    Operators["⚙️ Operators (Custom Controllers)\nEncode domain knowledge into the control loop"]
+    CRDs["📝 CRDs (Custom Resource Definitions)\nTeach Kubernetes new resource types"]
+    Core["🏗️ Kubernetes Core\nPods, Services, Deployments, API Server, etcd"]
+
+    Helm --> Webhooks --> Operators --> CRDs --> Core
+
+    style Core fill:#2c3e50,color:#ecf0f1
+    style CRDs fill:#2980b9,color:#fff
+    style Operators fill:#27ae60,color:#fff
+    style Webhooks fill:#e67e22,color:#fff
+    style Helm fill:#8e44ad,color:#fff
+```
+
+**Figure 6.4:** The full Kubernetes extensibility stack. Each layer builds on the one below — CRDs extend vocabulary, Operators extend behavior, Admission Webhooks extend enforcement, and Helm packages everything for distribution.
 
 This layered extensibility is what transformed Kubernetes from a container orchestrator into something far more significant: a universal control plane. It's the reason Kubernetes won the orchestration wars—not because it did everything itself, but because it made it possible for everyone else to extend it with their own expertise.
 

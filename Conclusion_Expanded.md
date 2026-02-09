@@ -20,6 +20,24 @@ Kubernetes is best understood not as a single product, but as the culmination of
 
 *   From the **Operator pattern and CRDs**, it learned the final lesson: a platform is only as powerful as its ability to be **extended**. By letting anyone define new resource types (CRDs), encode domain expertise into custom controllers (Operators), enforce custom rules (Admission Webhooks), and package it all for distribution (Helm), Kubernetes opened itself up so that the entire community could teach it new tricks. This extensibility is what transformed it from a container orchestrator into a **platform for building platforms**.
 
+```mermaid
+timeline
+    title 50 Years of Ideas Leading to Kubernetes
+    1968 : Dijkstra — Layered architecture (THE system)
+    1974 : Unix — Processes & isolation
+    1974 : Popek & Goldberg — VM formalization
+    1995 : Liedtke — Microkernel philosophy (L4)
+    2003 : Xen — Paravirtualization
+    2007 : KVM — Linux becomes a hypervisor
+    2008 : Google — Borg & failure-as-normal
+    2013 : Omega & Docker — Shared state + containers
+    2014 : Kubernetes — Open-source orchestration
+    2016+ : CRDs & Operators — Extensible platform
+    Future : Wasm & eBPF — Next-gen efficiency
+```
+
+**Figure C.1:** The 50-year timeline of ideas that converged in Kubernetes. Each era contributed a foundational concept — from layered architecture to extensible platforms — forming the DNA of the modern distributed operating system.
+
 By weaving these threads together, Kubernetes has become the de facto **Distributed Operating System of the 21st Century**. It provides a unified, abstract layer that makes a cluster of hundreds or thousands of unreliable computers look and feel like a single, resilient, and powerful machine. And crucially, it is a machine that anyone can extend—a living ecosystem that grows not just through core development, but through the collective expertise of its community.
 
 ---
@@ -50,6 +68,37 @@ Traditionally, the Linux kernel is a monolithic, protected core. Changing its be
 eBPF is supercharging Kubernetes networking, security, and observability.
 *   **High-Performance Networking:** Modern Kubernetes networking plugins like Cilium use eBPF to manage all network traffic between containers directly at the kernel level. This avoids complex and slower legacy tools like `iptables` and provides a massive boost in performance.
 *   **Granular Security and Observability:** Because eBPF can see every system call and network packet going in and out of a container, it allows for incredibly deep visibility and fine-grained security enforcement with almost no performance overhead.
+
+```mermaid
+graph TB
+    subgraph ControlPlane["Kubernetes Control Plane"]
+        API["API Server"]
+        Sched["Scheduler"]
+        CM["Controller Manager"]
+    end
+
+    subgraph Workloads["Managed Workloads"]
+        Containers["🐳 Containers\n(traditional)"]
+        Wasm["⚡ Wasm Modules\n(microsecond startup)"]
+    end
+
+    subgraph Kernel["Linux Kernel"]
+        eBPF["🔬 eBPF Programs"]
+        Net["Networking\n(Cilium)"]
+        Sec["Security\n(runtime enforcement)"]
+        Obs["Observability\n(tracing & metrics)"]
+        eBPF --> Net & Sec & Obs
+    end
+
+    ControlPlane --> Containers & Wasm
+    Containers & Wasm --> Kernel
+
+    style ControlPlane fill:#326ce5,color:#fff
+    style Workloads fill:#2980b9,color:#fff
+    style Kernel fill:#2c3e50,color:#ecf0f1
+```
+
+**Figure C.2:** The future Kubernetes stack. The control plane manages both traditional containers and lightweight Wasm modules. Inside the kernel, eBPF programs provide high-performance networking, security, and observability without the overhead of legacy tools.
 
 ### The Enduring Abstraction
 
