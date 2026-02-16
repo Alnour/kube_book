@@ -17,14 +17,15 @@ If you think of a data center full of computers (we call them **servers**) as a 
 But Kubernetes didn't just appear out of nowhere. It's the result of nearly 50 years of amazing ideas in computer science. To truly understand Kubernetes, we need to take a short trip back in time and see how these ideas grew and came together. This book will be your simple guide on that journey.
 
 ```mermaid
-graph LR
-    Ch1["<b>Ch 1</b>\nBuilding Blocks\n<i>Layers, Processes,\nVirtualization</i>"]
-    Ch2["<b>Ch 2</b>\nMicro Revolution\n<i>Microkernels,\nMicroservices</i>"]
-    Ch3["<b>Ch 3</b>\nVM Takes Over\n<i>Xen, KVM,\nCloud</i>"]
-    Ch4["<b>Ch 4</b>\nHardware Truth\n<i>Failure at Scale,\nBorg, Omega</i>"]
-    Ch5["<b>Ch 5</b>\nThe Conductor\n<i>Control Loop,\netcd, CAP</i>"]
-    Ch6["<b>Ch 6</b>\nExtensibility\n<i>CRDs, Operators,\nHelm</i>"]
-    Conc["<b>Conclusion</b>\n<i>Wasm, eBPF,\nFuture</i>"]
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
+graph TB
+    Ch1["<b>Ch 1</b><br/>Building Blocks<br/><i>Layers, Processes,<br/>Virtualization</i>"]
+    Ch2["<b>Ch 2</b><br/>Micro Revolution<br/><i>Microkernels,<br/>Microservices</i>"]
+    Ch3["<b>Ch 3</b><br/>VM Takes Over<br/><i>Xen, KVM,<br/>Cloud</i>"]
+    Ch4["<b>Ch 4</b><br/>Hardware Truth<br/><i>Failure at Scale,<br/>Borg, Omega</i>"]
+    Ch5["<b>Ch 5</b><br/>The Conductor<br/><i>Control Loop,<br/>etcd, CAP</i>"]
+    Ch6["<b>Ch 6</b><br/>Extensibility<br/><i>CRDs, Operators,<br/>Helm</i>"]
+    Conc["<b>Conclusion</b><br/><i>Wasm, eBPF,<br/>Future</i>"]
 
     Ch1 --> Ch2 --> Ch3 --> Ch4 --> Ch5 --> Ch6 --> Conc
 

@@ -21,6 +21,7 @@ Kubernetes is best understood not as a single product, but as the culmination of
 *   From the **Operator pattern and CRDs**, it learned the final lesson: a platform is only as powerful as its ability to be **extended**. By letting anyone define new resource types (CRDs), encode domain expertise into custom controllers (Operators), enforce custom rules (Admission Webhooks), and package it all for distribution (Helm), Kubernetes opened itself up so that the entire community could teach it new tricks. This extensibility is what transformed it from a container orchestrator into a **platform for building platforms**.
 
 ```mermaid
+%%{init: {'timeline': {'padding': 10}}}%%
 timeline
     title 50 Years of Ideas Leading to Kubernetes
     1968 : Dijkstra — Layered architecture (THE system)
@@ -70,6 +71,7 @@ eBPF is supercharging Kubernetes networking, security, and observability.
 *   **Granular Security and Observability:** Because eBPF can see every system call and network packet going in and out of a container, it allows for incredibly deep visibility and fine-grained security enforcement with almost no performance overhead.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph TB
     subgraph ControlPlane["Kubernetes Control Plane"]
         API["API Server"]
@@ -78,15 +80,15 @@ graph TB
     end
 
     subgraph Workloads["Managed Workloads"]
-        Containers["🐳 Containers\n(traditional)"]
-        Wasm["⚡ Wasm Modules\n(microsecond startup)"]
+        Containers["🐳 Containers<br/>(traditional)"]
+        Wasm["⚡ Wasm Modules<br/>(microsecond startup)"]
     end
 
     subgraph Kernel["Linux Kernel"]
         eBPF["🔬 eBPF Programs"]
-        Net["Networking\n(Cilium)"]
-        Sec["Security\n(runtime enforcement)"]
-        Obs["Observability\n(tracing & metrics)"]
+        Net["Networking<br/>(Cilium)"]
+        Sec["Security<br/>(runtime enforcement)"]
+        Obs["Observability<br/>(tracing & metrics)"]
         eBPF --> Net & Sec & Obs
     end
 

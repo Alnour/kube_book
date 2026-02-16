@@ -35,6 +35,7 @@ This design brilliantly solved the problems of the monolith:
 *   **Flexibility:** Since system services are just regular programs, you can stop, start, update, or replace them on the fly without ever rebooting the machine. You could, for example, switch from one networking stack to another by simply stopping one process and starting another.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph TB
     subgraph Monolithic["Monolithic Kernel"]
         MK_App["User Applications"]
@@ -68,6 +69,8 @@ graph TB
         MU_User --> MU_Kernel --> MU_HW
     end
 
+    Monolithic ~~~ Micro
+
     style MK_Kernel fill:#e74c3c,color:#fff
     style MU_Kernel fill:#27ae60,color:#fff
     style MU_User fill:#2980b9,color:#fff
@@ -96,6 +99,7 @@ The **microservices** approach solves this by applying the microkernel philosoph
 Each service runs in its own process, completely isolated from the others. They communicate with each other over the network. Now, if the `billing-service` crashes, the other services remain online.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph TB
     subgraph Monolith["Monolith Application"]
         M_UI["UI"]
@@ -120,6 +124,8 @@ graph TB
         S_OK["Billing crash = only billing affected"]
     end
 
+    Monolith ~~~ Microservices
+
     style Monolith fill:#e74c3c,color:#fff
     style M_Bill fill:#c0392b,color:#fff
     style Microservices fill:#27ae60,color:#fff
@@ -139,6 +145,7 @@ This brings us to the key insight: **Kubernetes is the logical conclusion of the
 *   **Your Application Pods are the "User Space":** Your actual applications—your web servers, databases, and microservices—run as isolated "user-space processes" called **Pods**. A Pod is completely oblivious to the hardware it's running on. It just knows that it has been given a certain amount of CPU and memory and an IP address, and it communicates with other Pods through the network channels that the Kubernetes "kernel" provides.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph TB
     subgraph UserSpace["'User Space' — Application Pods"]
         Pod1["Web Server Pod"]

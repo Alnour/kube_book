@@ -14,6 +14,7 @@ In 2008, Google engineer Jeff Dean gave a presentation that pulled back the curt
 *   **Power Distribution Failures:** At least **once a year**, a major power distribution unit would fail, taking **500 to 1,000 machines** offline simultaneously.
 
 ```mermaid
+%%{init: {'xyChart': {'width': 500, 'height': 300}}}%%
 xychart-beta
     title "Annual Failures per ~1,800-Server Cluster (Jeff Dean, 2008)"
     x-axis ["Machine Failures", "Disk Failures", "Rack Failures", "Power Failures"]
@@ -34,14 +35,15 @@ This is the origin of the famous **"pets vs. cattle"** analogy:
 *   **Cattle:** Are anonymous, numbered servers in a herd. When one gets sick, you don't try to fix it. You simply remove it from the herd and replace it with a new, healthy one. The loss of one is statistically irrelevant to the health of the herd.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph LR
     subgraph Pet["🐕 Pets (Old Way)"]
-        P1["Named Server\n'web-01'"] -->|gets sick| P2["SSH in &\nmanual repair"] -->|nursed back| P3["Same server\nback online"]
+        P1["Named Server<br/>'web-01'"] -->|gets sick| P2["SSH in &<br/>manual repair"] -->|nursed back| P3["Same server<br/>back online"]
         P4["If it dies = CRISIS"]
     end
 
     subgraph Cattle["🐄 Cattle (Kubernetes Way)"]
-        C1["Numbered Server\n'node-#4382'"] -->|gets sick| C2["Terminate\nautomatically"] -->|replaced| C3["New healthy\nserver spun up"]
+        C1["Numbered Server<br/>'node-#4382'"] -->|gets sick| C2["Terminate<br/>automatically"] -->|replaced| C3["New healthy<br/>server spun up"]
         C4["If it dies = no big deal"]
     end
 
@@ -90,34 +92,37 @@ Kubernetes was created by Google engineers who had worked on both Borg and Omega
 In Kubernetes, *nothing* is allowed to touch `etcd` directly except for the API Server. Every single component—the scheduler, the node agents, the user—must read and write state by talking to this single, consistent, versioned REST API.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph TB
     subgraph Borg["Borg (1st Gen)"]
-        BM["BorgMaster\n(monolithic)"]
+        BM["BorgMaster<br/>(monolithic)"]
         BM -->|all decisions| BS1["Scheduler"]
         BM --> BState["In-memory state"]
         BS1 --> BN1["Node"] & BN2["Node"] & BN3["Node"]
     end
 
     subgraph Omega["Omega (2nd Gen)"]
-        OS1["Scheduler A\n(web)"]
-        OS2["Scheduler B\n(batch)"]
-        OState[("Shared State\n(Paxos)")]
+        OS1["Scheduler A<br/>(web)"]
+        OS2["Scheduler B<br/>(batch)"]
+        OState[("Shared State<br/>(Paxos)")]
         OS1 -->|optimistic\nconcurrency| OState
         OS2 -->|optimistic\nconcurrency| OState
         OState --> ON1["Node"] & ON2["Node"] & ON3["Node"]
     end
 
     subgraph K8s["Kubernetes (3rd Gen)"]
-        API["API Server\n(single gateway)"]
+        API["API Server<br/>(single gateway)"]
         KSched["Scheduler"]
-        KCM["Controller\nManager"]
-        ETCD[("etcd\n(distributed KV)")]
+        KCM["Controller<br/>Manager"]
+        ETCD[("etcd<br/>(distributed KV)")]
         API <--> KSched
         API <--> KCM
         API <--> ETCD
         API --> KN1["Node"] & KN2["Node"] & KN3["Node"]
-        EXT["Extensibility\n(CRDs, Operators)"] -.-> API
+        EXT["Extensibility<br/>(CRDs, Operators)"] -.-> API
     end
+
+    Borg ~~~ Omega ~~~ K8s
 
     style Borg fill:#e67e22,color:#fff
     style Omega fill:#2980b9,color:#fff

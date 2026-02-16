@@ -14,9 +14,10 @@ The thermostat then enters an infinite loop:
 3.  **Act:** If there's a difference, it takes action to correct it (turning the heat or A/C on). If there's no difference, it does nothing.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph LR
-    Observe["🔍 Observe\n(current state)"] --> Compare["⚖️ Compare\n(current vs desired)"]
-    Compare --> Act["⚡ Act\n(close the gap)"]
+    Observe["🔍 Observe<br/>(current state)"] --> Compare["⚖️ Compare<br/>(current vs desired)"]
+    Compare --> Act["⚡ Act<br/>(close the gap)"]
     Act --> Observe
     Desired["📋 Desired State"] -->|input| Compare
 
@@ -51,13 +52,14 @@ You don't give Kubernetes commands. Instead, you give it a **manifest** (usually
 You are telling Kubernetes, "My desired state is to have 3 replicas of my web server running."
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph LR
     subgraph Imperative["Edge-Triggered (Imperative)"]
-        I1["Command:\ndocker run"] --> I2["Container\nrunning ✓"] --> I3["Container\ncrashes 💥"] --> I4["State drifts\nNo recovery ✗"]
+        I1["Command:<br/>docker run"] --> I2["Container<br/>running ✓"] --> I3["Container<br/>crashes 💥"] --> I4["State drifts<br/>No recovery ✗"]
     end
 
     subgraph Declarative["Level-Triggered (Declarative / K8s)"]
-        D1["Declare:\nreplicas: 3"] --> D2["3 Pods\nrunning ✓"] --> D3["1 Pod\ncrashes 💥"] --> D4["Auto-detected:\n2 vs 3"] --> D5["Auto-healed:\n3 Pods ✓"]
+        D1["Declare:<br/>replicas: 3"] --> D2["3 Pods<br/>running ✓"] --> D3["1 Pod<br/>crashes 💥"] --> D4["Auto-detected:<br/>2 vs 3"] --> D5["Auto-healed:<br/>3 Pods ✓"]
         D5 -->|"loop continues"| D4
     end
 
@@ -79,7 +81,8 @@ This loop is always running.
 *   *Loop 1000:* An admin accidentally starts an extra replica manually. The controller now sees 4, but you only want 3. It terminates one.
 
 ```mermaid
-graph LR
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
+graph TB
     subgraph Loop1["Loop 1: Initial"]
         L1_Obs["Observed: 0"] --> L1_Des["Desired: 3"]
         L1_Des --> L1_Act["Action: Create 3 Pods"]
@@ -95,7 +98,7 @@ graph LR
         L3_Des --> L3_Act["Action: Terminate 1 Pod"]
     end
 
-    Loop1 --> Loop2 --> Loop3
+    Loop1 ~~~ Loop2 ~~~ Loop3
 
     style L1_Act fill:#27ae60,color:#fff
     style L2_Act fill:#f39c12,color:#fff
@@ -124,10 +127,11 @@ The CAP Theorem states that in a distributed database, you can only have two of 
 *   **Partition Tolerance (P):** The system can survive a network failure (a "partition") where groups of servers are temporarily unable to communicate with each other.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph TB
-    C["<b>Consistency (C)</b>\nEvery read gets the\nmost recent write"]
-    A["<b>Availability (A)</b>\nEvery request gets\na response"]
-    P["<b>Partition Tolerance (P)</b>\nSystem works despite\nnetwork splits"]
+    C["<b>Consistency (C)</b><br/>Every read gets the<br/>most recent write"]
+    A["<b>Availability (A)</b><br/>Every request gets<br/>a response"]
+    P["<b>Partition Tolerance (P)</b><br/>System works despite<br/>network splits"]
 
     C ---|"CP ← etcd / K8s choose this"| P
     C --- A
@@ -152,6 +156,7 @@ To prevent this, etcd guarantees consistency above all else. It uses the **Raft 
 3.  A write is only considered successful after the leader has replicated it to a **majority** (a "quorum") of the servers.
 
 ```mermaid
+%%{init: {'sequence': {'actorMargin': 40, 'width': 150, 'height': 40, 'boxMargin': 8, 'noteMargin': 8, 'messageMargin': 30}}}%%
 sequenceDiagram
     participant Client
     participant Leader as etcd Leader
@@ -174,6 +179,7 @@ sequenceDiagram
 If a network partition occurs and a quorum cannot be formed, the etcd cluster will temporarily refuse to accept any new writes. It would rather become briefly unavailable than risk accepting conflicting information that would corrupt the state of the cluster.
 
 Finally, etcd provides a crucial **watch** feature. The Kubernetes controllers don't waste time constantly asking etcd, "Anything new? Anything new?" Instead, they place a "watch" on the parts of the database they care about. The moment a value changes (e.g., a user updates a desired state), etcd proactively notifies the relevant controller. ```mermaid
+%%{init: {'sequence': {'actorMargin': 40, 'width': 150, 'height': 40, 'boxMargin': 8, 'noteMargin': 8, 'messageMargin': 30}}}%%
 sequenceDiagram
     participant User
     participant API as API Server

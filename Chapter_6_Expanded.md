@@ -45,6 +45,7 @@ For example, you could create a CRD called `MySQLCluster`. Once you register thi
 The CRD doesn't do anything by itself—it just extends the API Server's vocabulary. But this is a crucial first step. Think back to Chapter 2's microkernel philosophy. If Kubernetes is a distributed operating system, CRDs are like installing new **device drivers**. They teach the OS about new hardware (or in this case, new concepts) that it didn't know about when it was first installed. The API Server from Chapter 4, which we described as the front door of the building, now has a new type of visitor it can recognize and process.
 
 ```mermaid
+%%{init: {'sequence': {'actorMargin': 40, 'width': 150, 'height': 40, 'boxMargin': 8, 'noteMargin': 8, 'messageMargin': 30}}}%%
 sequenceDiagram
     participant Admin
     participant API as API Server
@@ -102,16 +103,17 @@ Now imagine a replica crashes. A generic Kubernetes controller would blindly res
 *   Wait for the new replica to fully sync before marking the cluster as healthy again.
 
 ```mermaid
-graph LR
-    Watch["Watch Trigger:\nMySQLCluster created"] --> Primary["Create Primary\nInstance"]
-    Primary --> Snapshot["Take Data\nSnapshot"]
-    Snapshot --> R1["Start Replica 1\n+ Sync"]
-    R1 --> R2["Start Replica 2\n+ Sync"]
-    R2 --> Backup["Create Backup\nCronJob"]
-    Backup --> Steady["Steady State ✓\n(desired = observed)"]
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
+graph TB
+    Watch["Watch Trigger:<br/>MySQLCluster created"] --> Primary["Create Primary<br/>Instance"]
+    Primary --> Snapshot["Take Data<br/>Snapshot"]
+    Snapshot --> R1["Start Replica 1<br/>+ Sync"]
+    R1 --> R2["Start Replica 2<br/>+ Sync"]
+    R2 --> Backup["Create Backup<br/>CronJob"]
+    Backup --> Steady["Steady State ✓<br/>(desired = observed)"]
     Steady -->|"continuous monitoring"| Steady
 
-    Crash["Replica Crash 💥"] --> Resync["Check Replication Lag\n→ Fresh Snapshot\n→ Resync New Pod"]
+    Crash["Replica Crash 💥"] --> Resync["Check Replication Lag<br/>→ Fresh Snapshot<br/>→ Resync New Pod"]
     Resync --> Steady
 
     style Watch fill:#326ce5,color:#fff
@@ -167,12 +169,13 @@ Kubernetes lets you insert your own custom logic into this chain via two types o
 Together, Validating and Mutating Webhooks complete the extensibility picture. If we extend the "front door" analogy from Chapter 4: CRDs teach the building about new types of visitors. Operators know how to escort those visitors to where they need to go. And Admission Webhooks are the security guards who check IDs (validate) and hand out visitor badges (mutate) before anyone steps inside.
 
 ```mermaid
-graph LR
-    Req["API Request"] --> Auth["Authentication\n& Authorization"]
-    Auth --> Mutating["Mutating\nWebhooks\n(modify request)"]
-    Mutating --> Schema["Schema\nValidation"]
-    Schema --> Validating["Validating\nWebhooks\n(accept/reject)"]
-    Validating --> etcd["etcd\n(stored)"]
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
+graph TB
+    Req["API Request"] --> Auth["Authentication<br/>& Authorization"]
+    Auth --> Mutating["Mutating<br/>Webhooks<br/>(modify request)"]
+    Mutating --> Schema["Schema<br/>Validation"]
+    Schema --> Validating["Validating<br/>Webhooks<br/>(accept/reject)"]
+    Validating --> etcd["etcd<br/>(stored)"]
 
     style Req fill:#2c3e50,color:#ecf0f1
     style Auth fill:#8e44ad,color:#fff
@@ -215,12 +218,13 @@ Let's step back and see how all the pieces fit together.
 4.  **Helm** packages all of the above into distributable, versionable, configurable bundles that can be shared across the ecosystem.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph TB
-    Helm["🎯 Helm Charts\nPackage & distribute all of the above"]
-    Webhooks["🔒 Admission Webhooks\nEnforce custom rules (validate & mutate)"]
-    Operators["⚙️ Operators (Custom Controllers)\nEncode domain knowledge into the control loop"]
-    CRDs["📝 CRDs (Custom Resource Definitions)\nTeach Kubernetes new resource types"]
-    Core["🏗️ Kubernetes Core\nPods, Services, Deployments, API Server, etcd"]
+    Helm["🎯 Helm Charts<br/>Package & distribute all of the above"]
+    Webhooks["🔒 Admission Webhooks<br/>Enforce custom rules (validate & mutate)"]
+    Operators["⚙️ Operators (Custom Controllers)<br/>Encode domain knowledge into the control loop"]
+    CRDs["📝 CRDs (Custom Resource Definitions)<br/>Teach Kubernetes new resource types"]
+    Core["🏗️ Kubernetes Core<br/>Pods, Services, Deployments, API Server, etcd"]
 
     Helm --> Webhooks --> Operators --> CRDs --> Core
 

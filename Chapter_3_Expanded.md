@@ -9,6 +9,7 @@ The microkernel debate of the 1990s gave us the philosophical blueprint for micr
 Imagine owning a 50-passenger bus but only ever using it to drive yourself to work. This was the situation in most data centers in the early 2000s. Companies would buy a powerful server to run a single application, like a database or a web server. Even at peak times, the application might only use 10-15% of the server's CPU power. The rest of that expensive hardware sat idle, wasting electricity and taking up space.
 
 ```mermaid
+%%{init: {'xyChart': {'width': 500, 'height': 300}}}%%
 xychart-beta
     title "Typical Server Utilization (Early 2000s)"
     x-axis ["Used Capacity", "Idle / Wasted"]
@@ -35,6 +36,7 @@ The Xen team had a brilliantly pragmatic idea: **instead of tricking the OS, let
 This approach was named **Paravirtualization**. The guest OS kernel was changed slightly to make it "virtualization-aware." It *knew* it was a guest running inside a virtual machine. Instead of issuing hardware commands that would be slow and difficult for the hypervisor to handle, the modified OS would make a direct, efficient function call to the Xen hypervisor, saying, "Hey, I need you to do this privileged task for me." These calls were named **hypercalls**, analogous to the "system calls" a regular program makes to its operating system.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph LR
     subgraph Full["Full Virtualization (slow)"]
         FG["Guest OS"] -->|"privileged instruction"| FT["Trap & Translate"] -->|"emulated"| FH["Hypervisor"] --> FHW["Hardware"]
@@ -67,19 +69,20 @@ Instead of building a hypervisor that ran *underneath* the OS, KVM is a module t
 This meant the Linux kernel could use its already world-class scheduler to assign CPU time to VMs. It could use its existing memory management to allocate RAM. You could use standard Linux tools to monitor and manage VMs. For I/O and device emulation, KVM was paired with a user-space program called **QEMU**, but the core CPU and memory virtualization was now handled directly by the kernel at lightning speed, thanks to the new hardware assists.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph TB
     subgraph VMs["Virtual Machines (Linux Processes)"]
-        VM1["VM 1\n(Guest OS + App)"]
-        VM2["VM 2\n(Guest OS + App)"]
-        VM3["VM 3\n(Guest OS + App)"]
+        VM1["VM 1<br/>(Guest OS + App)"]
+        VM2["VM 2<br/>(Guest OS + App)"]
+        VM3["VM 3<br/>(Guest OS + App)"]
     end
 
     subgraph QEMU_Layer["QEMU (User Space)"]
-        Q1["QEMU\nI/O Emulation"]
+        Q1["QEMU<br/>I/O Emulation"]
     end
 
     subgraph Kernel["Linux Kernel"]
-        KVM["KVM Module\n(CPU & Memory Virtualization)"]
+        KVM["KVM Module<br/>(CPU & Memory Virtualization)"]
         Sched["Linux Scheduler"]
         Mem["Memory Management"]
     end
@@ -118,6 +121,7 @@ Second, the deep integration of KVM into Linux created a seamless path forward. 
 *   **Kata Containers:** A technology that provides stronger isolation for your containers by running them inside their own lightweight, hardware-virtualized micro-VM.
 
 ```mermaid
+%%{init: {'timeline': {'padding': 10}}}%%
 timeline
     title Virtualization to Kubernetes Timeline
     2003 : Xen — Paravirtualization makes VMs practical on x86

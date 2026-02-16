@@ -22,6 +22,7 @@ Working on a system called the "THE Multiprogramming System," Dijkstra and his t
 *   **Layer 5: The Operator:** The user.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph TB
     L5["Layer 5: The Operator (User)"]
     L4["Layer 4: User Programs"]
@@ -52,6 +53,7 @@ The golden rule was **unidirectional dependency**. Layer 4 could ask for service
 This 50-year-old idea is at the very heart of Kubernetes's flexibility. Kubernetes uses a set of interfaces (contracts) that function as layers, separating the *what* from the *how*.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph LR
     subgraph Core["Kubernetes Core"]
         K8s([Kubernetes Control Plane])
@@ -120,19 +122,20 @@ Modern Linux containers take this idea to a whole new level using two powerful t
 2.  **Control Groups (cgroups):** This is the resource management side of containers. While namespaces give a container its own world, `cgroups` ensures it doesn't get too greedy. It's like putting a process on a budget. You can tell a container, "You are only allowed to use 1 CPU core and 2GB of RAM." This prevents a single buggy or malicious container from crashing the entire server by consuming all its resources.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph TB
     subgraph Container_A["Container A"]
-        PID_A["PID Namespace\n(sees PID 1)"]
-        MNT_A["Mount Namespace\n(private filesystem)"]
-        NET_A["Network Namespace\n(own IP address)"]
-        CG_A["cgroup Budget\nCPU: 1 core | RAM: 2GB"]
+        PID_A["PID Namespace<br/>(sees PID 1)"]
+        MNT_A["Mount Namespace<br/>(private filesystem)"]
+        NET_A["Network Namespace<br/>(own IP address)"]
+        CG_A["cgroup Budget<br/>CPU: 1 core | RAM: 2GB"]
     end
 
     subgraph Container_B["Container B"]
-        PID_B["PID Namespace\n(sees PID 1)"]
-        MNT_B["Mount Namespace\n(private filesystem)"]
-        NET_B["Network Namespace\n(own IP address)"]
-        CG_B["cgroup Budget\nCPU: 0.5 core | RAM: 1GB"]
+        PID_B["PID Namespace<br/>(sees PID 1)"]
+        MNT_B["Mount Namespace<br/>(private filesystem)"]
+        NET_B["Network Namespace<br/>(own IP address)"]
+        CG_B["cgroup Budget<br/>CPU: 0.5 core | RAM: 1GB"]
     end
 
     subgraph Host["Host Machine"]
@@ -179,6 +182,7 @@ For years, this has been the fundamental trade-off:
 *   **Containers:** Blazingly fast and lightweight, but have weaker isolation because they share the host kernel.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
 graph TB
     subgraph VM_Stack["Virtual Machine"]
         VM_App["Application"]
@@ -207,6 +211,8 @@ graph TB
         K_HW["Hardware"]
         K_App --> K_Libs --> K_MicroVM --> K_Hyp --> K_Host --> K_HW
     end
+
+    VM_Stack ~~~ Container_Stack ~~~ Kata_Stack
 
     style VM_Stack fill:#e74c3c,color:#fff
     style Container_Stack fill:#2980b9,color:#fff
