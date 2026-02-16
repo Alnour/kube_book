@@ -4,7 +4,6 @@
 - Authors: Alnour Alharin, Nevena Golubovic
 
 ## Acknowledgments
-- To Mark Lemoine, my manager at Oracle for five years of my career, who introduced me to Kubernetes and gave me the opportunity to explore it and use it to build different applications.
 - To Tony Choe, who taught me how to utilize OKE to build massive architectures.
 - To the Oracle Fusion Observability group, and especially the operations team led by Rob Mize, who gave me important practical lessons that helped me understand Kubernetes.
 
