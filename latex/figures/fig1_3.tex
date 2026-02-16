@@ -1,0 +1,29 @@
+% Figure 1.3: Container anatomy
+\begin{tikzpicture}[node distance=0.3cm]
+  % Container A
+  \node[mnode, fill=oceanblue, font=\scriptsize, minimum width=3.2cm] (pid_a) {PID Namespace (sees PID 1)};
+  \node[mnode, fill=oceanblue, font=\scriptsize, minimum width=3.2cm, below=of pid_a] (mnt_a) {Mount Namespace};
+  \node[mnode, fill=oceanblue, font=\scriptsize, minimum width=3.2cm, below=of mnt_a] (net_a) {Network Namespace};
+  \node[mnode, fill=oceanblue, font=\scriptsize, minimum width=3.2cm, below=of net_a] (cg_a) {cgroup: 1 core, 2GB};
+  \begin{scope}[on background layer]
+    \node[fit=(pid_a)(cg_a), subgraph={Container A}, fill=oceanblue!8] (ca) {};
+  \end{scope}
+
+  % Container B
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=3.2cm, right=1.5cm of pid_a] (pid_b) {PID Namespace (sees PID 1)};
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=3.2cm, below=of pid_b] (mnt_b) {Mount Namespace};
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=3.2cm, below=of mnt_b] (net_b) {Network Namespace};
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=3.2cm, below=of net_b] (cg_b) {cgroup: 0.5 core, 1GB};
+  \begin{scope}[on background layer]
+    \node[fit=(pid_b)(cg_b), subgraph={Container B}, fill=k8sgreen!8] (cb) {};
+  \end{scope}
+
+  % Shared kernel
+  \node[mnode, fill=darkblue, minimum width=8.5cm, below=1cm of $(cg_a.south)!0.5!(cg_b.south)$] (kernel) {Shared Linux Kernel};
+  \begin{scope}[on background layer]
+    \node[fit=(kernel), subgraph={Host Machine}, fill=darkblue!5] (host) {};
+  \end{scope}
+
+  \draw[arr] (ca.south) -- (kernel);
+  \draw[arr] (cb.south) -- (kernel);
+\end{tikzpicture}

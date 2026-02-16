@@ -1,0 +1,34 @@
+% Figure 3.3: KVM architecture
+\begin{tikzpicture}[node distance=0.4cm and 0.5cm]
+  % VMs
+  \node[mnode, fill=oceanblue, minimum width=2.5cm] (vm1) {VM 1\\(Guest OS + App)};
+  \node[mnode, fill=oceanblue, minimum width=2.5cm, right=of vm1] (vm2) {VM 2\\(Guest OS + App)};
+  \node[mnode, fill=oceanblue, minimum width=2.5cm, right=of vm2] (vm3) {VM 3\\(Guest OS + App)};
+  \begin{scope}[on background layer]
+    \node[fit=(vm1)(vm3), subgraph={Virtual Machines (Linux Processes)}, fill=oceanblue!8, inner sep=14pt] (vms) {};
+  \end{scope}
+
+  % QEMU
+  \node[mnode, fill=k8sgray, minimum width=8.8cm, below=1cm of vm2] (qemu) {QEMU --- I/O Emulation (User Space)};
+
+  % Kernel
+  \node[mnode, fill=darkblue, minimum width=3cm, below=0.8cm of qemu, xshift=-2cm] (kvm) {KVM Module\\CPU \& Mem Virt.};
+  \node[mnode, fill=darkblue, minimum width=2cm, right=0.4cm of kvm] (sched) {Linux\\Scheduler};
+  \node[mnode, fill=darkblue, minimum width=2cm, right=0.4cm of sched] (mem) {Memory\\Management};
+  \begin{scope}[on background layer]
+    \node[fit=(kvm)(mem), subgraph={Linux Kernel}, fill=darkblue!5, inner sep=14pt] (kern) {};
+  \end{scope}
+
+  % Hardware
+  \node[mnode, fill=k8sgray, minimum width=4cm, below=1cm of kern, xshift=-1cm] (cpu) {CPU with VT-x / AMD-V};
+  \node[mnode, fill=k8sgray, minimum width=3cm, right=0.4cm of cpu] (ram) {Physical RAM};
+  \begin{scope}[on background layer]
+    \node[fit=(cpu)(ram), subgraph={Hardware}, fill=k8sgray!8, inner sep=14pt] {};
+  \end{scope}
+
+  \draw[arr] (vms) -- (qemu);
+  \draw[arr] (qemu) -- (kvm);
+  \draw[thick, darkblue] (kvm) -- (sched);
+  \draw[thick, darkblue] (kvm) -- (mem);
+  \draw[arr] (kern) -- (cpu);
+\end{tikzpicture}

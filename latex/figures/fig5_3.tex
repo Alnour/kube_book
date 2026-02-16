@@ -1,0 +1,26 @@
+% Figure 5.3: Reconciliation loop iterations
+\begin{tikzpicture}[node distance=0.35cm, every node/.style={font=\scriptsize}]
+  % Loop 1
+  \node[mnode, fill=lightgray, text=darkblue, minimum width=2.5cm] (l1o) {Observed: 0};
+  \node[mnode, fill=lightgray, text=darkblue, minimum width=2.5cm, below=of l1o] (l1d) {Desired: 3};
+  \node[mnode, fill=k8sgreen, minimum width=2.5cm, below=of l1d] (l1a) {Create 3 Pods};
+  \draw[arr] (l1o) -- (l1d);
+  \draw[arr] (l1d) -- (l1a);
+  \node[above=0.2cm of l1o, font=\small\bfseries] {Loop 1: Initial};
+
+  % Loop 100
+  \node[mnode, fill=lightgray, text=darkblue, minimum width=2.5cm, right=1.5cm of l1o] (l2o) {Observed: 2};
+  \node[mnode, fill=lightgray, text=darkblue, minimum width=2.5cm, below=of l2o] (l2d) {Desired: 3};
+  \node[mnode, fill=warnorange, minimum width=2.5cm, below=of l2d] (l2a) {Create 1 Pod};
+  \draw[arr] (l2o) -- (l2d);
+  \draw[arr] (l2d) -- (l2a);
+  \node[above=0.2cm of l2o, font=\small\bfseries] {Loop 100: Crash};
+
+  % Loop 1000
+  \node[mnode, fill=lightgray, text=darkblue, minimum width=2.5cm, right=1.5cm of l2o] (l3o) {Observed: 4};
+  \node[mnode, fill=lightgray, text=darkblue, minimum width=2.5cm, below=of l3o] (l3d) {Desired: 3};
+  \node[mnode, fill=k8sred, minimum width=2.5cm, below=of l3d] (l3a) {Terminate 1 Pod};
+  \draw[arr] (l3o) -- (l3d);
+  \draw[arr] (l3d) -- (l3a);
+  \node[above=0.2cm of l3o, font=\small\bfseries] {Loop 1000: Extra};
+\end{tikzpicture}

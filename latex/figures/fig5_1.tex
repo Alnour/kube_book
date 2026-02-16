@@ -1,0 +1,12 @@
+% Figure 5.1: The Kubernetes control loop
+\begin{tikzpicture}[node distance=2cm and 2.5cm]
+  \node[mnode, fill=darkblue, minimum width=2.5cm, minimum height=1.1cm] (obs) {Observe\\{\scriptsize(current state)}};
+  \node[mnode, fill=darkblue, minimum width=2.5cm, minimum height=1.1cm, right=of obs] (cmp) {Compare\\{\scriptsize(current vs desired)}};
+  \node[mnode, fill=darkblue, minimum width=2.5cm, minimum height=1.1cm, below=1.5cm of $(obs.south)!0.5!(cmp.south)$] (act) {Act\\{\scriptsize(close the gap)}};
+  \node[mnode, fill=k8sblue, minimum width=2.5cm, above=1cm of cmp] (des) {Desired State};
+
+  \draw[arr] (obs) -- (cmp);
+  \draw[arr] (cmp) -- (act);
+  \draw[arr] (act) -| (obs);
+  \draw[arr] (des) -- node[right, font=\scriptsize] {input} (cmp);
+\end{tikzpicture}

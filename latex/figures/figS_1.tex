@@ -1,0 +1,24 @@
+% Figure S.1: Book roadmap
+\begin{tikzpicture}[node distance=0.5cm and 0.5cm]
+  \node[mnode, fill=darkblue, minimum width=2cm] (ch1)
+    {\textbf{Ch 1}\\\scriptsize Building Blocks};
+  \node[mnode, fill=sectioncolor, minimum width=2cm, right=of ch1] (ch2)
+    {\textbf{Ch 2}\\\scriptsize Micro Revolution};
+  \node[mnode, fill=oceanblue, minimum width=2cm, right=of ch2] (ch3)
+    {\textbf{Ch 3}\\\scriptsize VM Takes Over};
+  \node[mnode, fill=k8sred, minimum width=2cm, right=of ch3] (ch4)
+    {\textbf{Ch 4}\\\scriptsize Hardware Truth};
+  \node[mnode, fill=k8sgreen, minimum width=2cm, right=of ch4] (ch5)
+    {\textbf{Ch 5}\\\scriptsize The Conductor};
+  \node[mnode, fill=k8spurple, minimum width=2cm, right=of ch5] (ch6)
+    {\textbf{Ch 6}\\\scriptsize Extensibility};
+  \node[mnode, fill=k8sorange, minimum width=2cm, right=of ch6] (conc)
+    {\textbf{Concl.}\\\scriptsize Future};
+
+  \draw[arr] (ch1) -- (ch2);
+  \draw[arr] (ch2) -- (ch3);
+  \draw[arr] (ch3) -- (ch4);
+  \draw[arr] (ch4) -- (ch5);
+  \draw[arr] (ch5) -- (ch6);
+  \draw[arr] (ch6) -- (conc);
+\end{tikzpicture}

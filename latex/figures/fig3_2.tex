@@ -1,0 +1,20 @@
+% Figure 3.2: Full virtualization vs. paravirtualization (Xen)
+\begin{tikzpicture}[node distance=0.6cm and 0.8cm]
+  % Full Virtualization
+  \node[mnode, fill=k8sred, minimum width=2.3cm, font=\scriptsize] (fg) {Guest OS};
+  \node[mnode, fill=k8sred, minimum width=2.3cm, font=\scriptsize, right=of fg] (ft) {Trap \& Translate};
+  \node[mnode, fill=k8sred, minimum width=2.3cm, font=\scriptsize, right=of ft] (fh) {Hypervisor};
+  \node[mnode, fill=k8sred, minimum width=2.3cm, font=\scriptsize, right=of fh] (fhw) {Hardware};
+  \draw[arr] (fg) -- node[above, font=\tiny] {privileged instr.} (ft);
+  \draw[arr] (ft) -- node[above, font=\tiny] {emulated} (fh);
+  \draw[arr] (fh) -- (fhw);
+  \node[above=0.3cm of ft, font=\small\bfseries, color=k8sred] {Full Virtualization (slow)};
+
+  % Paravirtualization
+  \node[mnode, fill=k8sgreen, minimum width=2.8cm, font=\scriptsize, below=1.5cm of fg, xshift=1cm] (pg) {Modified Guest OS};
+  \node[mnode, fill=k8sgreen, minimum width=2.8cm, font=\scriptsize, right=1.2cm of pg] (ph) {Xen Hypervisor};
+  \node[mnode, fill=k8sgreen, minimum width=2.8cm, font=\scriptsize, right=1.2cm of ph] (phw) {Hardware};
+  \draw[arr] (pg) -- node[above, font=\tiny] {hypercall (direct)} (ph);
+  \draw[arr] (ph) -- (phw);
+  \node[above=0.3cm of ph, font=\small\bfseries, color=k8sgreen] {Paravirtualization --- Xen (fast)};
+\end{tikzpicture}

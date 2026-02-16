@@ -1,0 +1,29 @@
+% Figure 5.2: Edge-triggered (imperative) vs. level-triggered (declarative)
+\begin{tikzpicture}[node distance=0.4cm and 0.5cm]
+  % Imperative
+  \node[mnode, fill=k8sred, font=\scriptsize, minimum width=2cm] (i1) {Command:\\docker run};
+  \node[mnode, fill=k8sred, font=\scriptsize, minimum width=2cm, right=of i1] (i2) {Container\\running \checkmark};
+  \node[mnode, fill=k8sred, font=\scriptsize, minimum width=2cm, right=of i2] (i3) {Container\\crashes \textbf{!}};
+  \node[mnode, fill=k8sred, font=\scriptsize, minimum width=2cm, right=of i3] (i4) {State drifts\\No recovery};
+  \draw[arr] (i1) -- (i2);
+  \draw[arr] (i2) -- (i3);
+  \draw[arr] (i3) -- (i4);
+  \begin{scope}[on background layer]
+    \node[fit=(i1)(i4), subgraph={Edge-Triggered (Imperative)}, fill=k8sred!5, inner sep=14pt] {};
+  \end{scope}
+
+  % Declarative
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=1.8cm, below=2.5cm of i1] (d1) {Declare:\\replicas: 3};
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=1.8cm, right=of d1] (d2) {3 Pods\\running \checkmark};
+  \node[mnode, fill=k8sred, font=\scriptsize, minimum width=1.8cm, right=of d2] (d3) {1 Pod\\crashes \textbf{!}};
+  \node[mnode, fill=warnorange, font=\scriptsize, minimum width=1.8cm, right=of d3] (d4) {Detected:\\2 vs 3};
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=1.8cm, right=of d4] (d5) {Auto-healed:\\3 Pods \checkmark};
+  \draw[arr] (d1) -- (d2);
+  \draw[arr] (d2) -- (d3);
+  \draw[arr] (d3) -- (d4);
+  \draw[arr] (d4) -- (d5);
+  \draw[arr, k8sgreen] (d5) to[bend right=30] node[below, font=\tiny] {loop continues} (d4);
+  \begin{scope}[on background layer]
+    \node[fit=(d1)(d5), subgraph={Level-Triggered (Declarative / K8s)}, fill=k8sgreen!5, inner sep=14pt] {};
+  \end{scope}
+\end{tikzpicture}

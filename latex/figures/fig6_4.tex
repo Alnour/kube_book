@@ -1,0 +1,18 @@
+% Figure 6.4: The full Kubernetes extensibility stack
+\begin{tikzpicture}[node distance=0.5cm, every node/.style={minimum width=10cm}]
+  \node[mnode, fill=k8spurple, minimum height=1cm] (helm)
+    {Helm Charts --- Package \& distribute all of the above};
+  \node[mnode, fill=k8sorange, minimum height=1cm, below=of helm] (wh)
+    {Admission Webhooks --- Enforce custom rules (validate \& mutate)};
+  \node[mnode, fill=k8sgreen, minimum height=1cm, below=of wh] (ops)
+    {Operators (Custom Controllers) --- Encode domain knowledge};
+  \node[mnode, fill=oceanblue, minimum height=1cm, below=of ops] (crds)
+    {CRDs --- Teach Kubernetes new resource types};
+  \node[mnode, fill=darkblue, minimum height=1cm, below=of crds] (core)
+    {Kubernetes Core --- Pods, Services, Deployments, API Server, etcd};
+
+  \draw[arr] (helm) -- (wh);
+  \draw[arr] (wh) -- (ops);
+  \draw[arr] (ops) -- (crds);
+  \draw[arr] (crds) -- (core);
+\end{tikzpicture}

@@ -1,0 +1,24 @@
+% Figure 4.2: Pets vs. cattle
+\begin{tikzpicture}[node distance=0.5cm and 0.7cm]
+  % Pets
+  \node[mnode, fill=k8sred, font=\scriptsize, minimum width=2.2cm] (p1) {Named Server\\`web-01'};
+  \node[mnode, fill=k8sred, font=\scriptsize, minimum width=2.2cm, right=of p1] (p2) {SSH in \&\\manual repair};
+  \node[mnode, fill=k8sred, font=\scriptsize, minimum width=2.2cm, right=of p2] (p3) {Same server\\back online};
+  \draw[arr] (p1) -- node[above, font=\tiny] {gets sick} (p2);
+  \draw[arr] (p2) -- node[above, font=\tiny] {nursed back} (p3);
+  \node[below=0.3cm of p2, font=\scriptsize\itshape, color=k8sred] {If it dies = CRISIS};
+  \begin{scope}[on background layer]
+    \node[fit=(p1)(p3), subgraph={Pets (Old Way)}, fill=k8sred!5, inner sep=16pt] {};
+  \end{scope}
+
+  % Cattle
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=2.2cm, below=2.5cm of p1] (c1) {Numbered Server\\\#4382};
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=2.2cm, right=of c1] (c2) {Terminate\\automatically};
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=2.2cm, right=of c2] (c3) {New healthy\\server spun up};
+  \draw[arr] (c1) -- node[above, font=\tiny] {gets sick} (c2);
+  \draw[arr] (c2) -- node[above, font=\tiny] {replaced} (c3);
+  \node[below=0.3cm of c2, font=\scriptsize\itshape, color=k8sgreen] {If it dies = no big deal};
+  \begin{scope}[on background layer]
+    \node[fit=(c1)(c3), subgraph={Cattle (Kubernetes Way)}, fill=k8sgreen!5, inner sep=16pt] {};
+  \end{scope}
+\end{tikzpicture}

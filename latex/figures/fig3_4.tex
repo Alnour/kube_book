@@ -1,0 +1,16 @@
+% Figure 3.4: Virtualization to Kubernetes timeline
+\begin{tikzpicture}
+  \draw[very thick, darkblue] (0,0) -- (13,0);
+  \foreach \x/\year/\event in {
+    0/2003/Xen --- Paravirtualization,
+    2.5/2006/Amazon EC2 on Xen,
+    5/2007/KVM --- Linux as hypervisor,
+    7.5/2013/Docker --- Containers go mainstream,
+    10/2014/Kubernetes released,
+    12.5/2017+/KubeVirt \& Kata Containers%
+  } {
+    \fill[darkblue] (\x,0) circle (3pt);
+    \node[above=0.15cm, font=\scriptsize\bfseries, text=darkblue, text width=2.2cm, align=center] at (\x,0) {\year};
+    \node[below=0.15cm, font=\tiny, text width=2.2cm, align=center] at (\x,0) {\event};
+  }
+\end{tikzpicture}

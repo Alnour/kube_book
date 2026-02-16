@@ -1,0 +1,15 @@
+% Figure 6.3: Admission webhook pipeline
+\begin{tikzpicture}[node distance=0.5cm and 0.7cm]
+  \node[mnode, fill=darkblue, minimum width=2.2cm] (req) {API Request};
+  \node[mnode, fill=k8spurple, minimum width=2.2cm, right=of req] (auth) {Authentication\\\& Authorization};
+  \node[mnode, fill=oceanblue, minimum width=2.2cm, right=of auth] (mut) {Mutating\\Webhooks};
+  \node[mnode, fill=k8sgray, minimum width=2.2cm, right=of mut] (schema) {Schema\\Validation};
+  \node[mnode, fill=k8sorange, minimum width=2.2cm, right=of schema] (val) {Validating\\Webhooks};
+  \node[mnode, fill=k8sgreen, minimum width=2.2cm, right=of val] (etcd) {etcd\\(stored)};
+
+  \draw[arr] (req) -- (auth);
+  \draw[arr] (auth) -- (mut);
+  \draw[arr] (mut) -- (schema);
+  \draw[arr] (schema) -- (val);
+  \draw[arr] (val) -- (etcd);
+\end{tikzpicture}

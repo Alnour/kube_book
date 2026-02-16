@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 297" width="210mm" height="297mm">
+  <defs>
+    <!-- Background gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#162447"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </radialGradient>
+
+    <!-- Head gradient -->
+    <radialGradient id="headGrad" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#4a90d9"/>
+      <stop offset="100%" stop-color="#326ce5"/>
+    </radialGradient>
+
+    <!-- Torso gradient -->
+    <linearGradient id="torsoGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2c3e50"/>
+      <stop offset="100%" stop-color="#1a252f"/>
+    </linearGradient>
+
+    <!-- Baton glow -->
+    <radialGradient id="batonGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#64b5f6" stop-opacity="0.8"/>
+      <stop offset="60%" stop-color="#326ce5" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#326ce5" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Orchestration line gradient -->
+    <linearGradient id="orchLineGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#326ce5" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#326ce5" stop-opacity="0.05"/>
+    </linearGradient>
+
+    <!-- Grid pattern -->
+    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#ffffff" stroke-width="0.15" opacity="0.04"/>
+    </pattern>
+
+    <!-- Container ribbing pattern -->
+    <pattern id="ribs" width="4" height="3" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="1.5" x2="4" y2="1.5" stroke="#1a4a8a" stroke-width="0.3" opacity="0.4"/>
+    </pattern>
+  </defs>
+
+  <!-- ==================== BACKGROUND ==================== -->
+  <rect width="210" height="297" fill="url(#bgGrad)"/>
+  <rect width="210" height="297" fill="url(#grid)"/>
+
+  <!-- Dark atmosphere band at top -->
+  <rect width="210" height="25" fill="#0d1117" opacity="0.4"/>
+
+  <!-- Kubernetes helm wheel watermark -->
+  <g transform="translate(105, 155)" opacity="0.035" fill="none" stroke="#ffffff" stroke-width="0.8">
+    <!-- Outer ring -->
+    <circle r="65"/>
+    <!-- Inner ring -->
+    <circle r="20"/>
+    <!-- 7 spokes -->
+    <line x1="0" y1="-20" x2="0" y2="-65"/>
+    <line x1="17.8" y1="-8.7" x2="58" y2="-28.3" />
+    <line x1="19" y1="6.2" x2="61.8" y2="20.2"/>
+    <line x1="11.5" y1="16.3" x2="37.5" y2="53"/>
+    <line x1="-11.5" y1="16.3" x2="-37.5" y2="53"/>
+    <line x1="-19" y1="6.2" x2="-61.8" y2="20.2"/>
+    <line x1="-17.8" y1="-8.7" x2="-58" y2="-28.3"/>
+    <!-- Spoke end circles -->
+    <circle cx="0" cy="-65" r="8"/>
+    <circle cx="58" cy="-28.3" r="8"/>
+    <circle cx="61.8" cy="20.2" r="8"/>
+    <circle cx="37.5" cy="53" r="8"/>
+    <circle cx="-37.5" cy="53" r="8"/>
+    <circle cx="-61.8" cy="20.2" r="8"/>
+    <circle cx="-58" cy="-28.3" r="8"/>
+  </g>
+
+  <!-- ==================== ZONE B: TITLE + SUBTITLE ==================== -->
+
+  <!-- Title (two lines) -->
+  <text x="105" y="40" text-anchor="middle"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="16" font-weight="300" fill="#7eb8e6"
+        letter-spacing="2">Learning</text>
+  <text x="105" y="56" text-anchor="middle"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="22" font-weight="bold" fill="#ffffff"
+        letter-spacing="1.5">Kubernetes</text>
+
+  <!-- Subtitle -->
+  <text x="105" y="66" text-anchor="middle"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="6" font-weight="300" fill="#7eb8e6"
+        letter-spacing="0.5">A Simple Journey From The Beginning</text>
+
+  <!-- Separator line below subtitle -->
+  <line x1="60" y1="71" x2="150" y2="71" stroke="#326ce5" stroke-width="0.3" opacity="0.5"/>
+
+  <!-- ==================== ZONE C: CONDUCTOR FIGURE ==================== -->
+  <g transform="translate(105, 150)">
+
+    <!-- === CONDUCTOR BODY === -->
+
+    <!-- Lower body / coat tails -->
+    <line x1="-6" y1="22" x2="-18" y2="55" stroke="#7eb8e6" stroke-width="0.5" opacity="0.15"/>
+    <line x1="6" y1="22" x2="18" y2="55" stroke="#7eb8e6" stroke-width="0.5" opacity="0.15"/>
+    <line x1="-3" y1="22" x2="-12" y2="60" stroke="#7eb8e6" stroke-width="0.4" opacity="0.1"/>
+    <line x1="3" y1="22" x2="12" y2="60" stroke="#7eb8e6" stroke-width="0.4" opacity="0.1"/>
+
+    <!-- Torso (trapezoid) -->
+    <polygon points="-12,-5 12,-5 8,22 -8,22" fill="url(#torsoGrad)" stroke="#7eb8e6" stroke-width="0.3" opacity="0.8"/>
+
+    <!-- Torso wireframe detail lines -->
+    <line x1="-10" y1="0" x2="10" y2="0" stroke="#7eb8e6" stroke-width="0.2" opacity="0.2"/>
+    <line x1="-9" y1="5" x2="9" y2="5" stroke="#7eb8e6" stroke-width="0.2" opacity="0.15"/>
+    <line x1="-9" y1="10" x2="9" y2="10" stroke="#7eb8e6" stroke-width="0.2" opacity="0.15"/>
+    <line x1="0" y1="-5" x2="0" y2="22" stroke="#7eb8e6" stroke-width="0.15" opacity="0.15"/>
+
+    <!-- Shoulders -->
+    <line x1="-12" y1="-5" x2="-20" y2="-2" stroke="#7eb8e6" stroke-width="0.5" opacity="0.6"/>
+    <line x1="12" y1="-5" x2="20" y2="-2" stroke="#7eb8e6" stroke-width="0.5" opacity="0.6"/>
+
+    <!-- Left arm (extended outward) -->
+    <path d="M -20,-2 Q -30,5 -35,0" fill="none" stroke="#7eb8e6" stroke-width="0.6" opacity="0.7"/>
+    <circle cx="-27" cy="2" r="1" fill="#326ce5" opacity="0.6"/>  <!-- elbow -->
+    <circle cx="-35" cy="0" r="1.2" fill="#326ce5" opacity="0.7"/>  <!-- wrist -->
+    <!-- Left hand fingers -->
+    <line x1="-35" y1="0" x2="-38" y2="-2" stroke="#7eb8e6" stroke-width="0.3" opacity="0.4"/>
+    <line x1="-35" y1="0" x2="-39" y2="0" stroke="#7eb8e6" stroke-width="0.3" opacity="0.4"/>
+    <line x1="-35" y1="0" x2="-38" y2="2" stroke="#7eb8e6" stroke-width="0.3" opacity="0.4"/>
+
+    <!-- Right arm (sweeping up holding baton) -->
+    <path d="M 20,-2 Q 28,-12 32,-22" fill="none" stroke="#7eb8e6" stroke-width="0.6" opacity="0.7"/>
+    <circle cx="25" cy="-8" r="1" fill="#326ce5" opacity="0.6"/>  <!-- elbow -->
+    <circle cx="32" cy="-22" r="1.2" fill="#326ce5" opacity="0.7"/>  <!-- wrist -->
+
+    <!-- Baton -->
+    <line x1="32" y1="-22" x2="42" y2="-38" stroke="#ffffff" stroke-width="0.6" opacity="0.9"/>
+    <!-- Baton glowing tip -->
+    <circle cx="42" cy="-38" r="5" fill="url(#batonGlow)"/>
+    <circle cx="42" cy="-38" r="1.2" fill="#ffffff" opacity="0.9"/>
+    <circle cx="42" cy="-38" r="0.6" fill="#64b5f6"/>
+
+    <!-- Head (heptagon — 7 sides like helm spokes) -->
+    <polygon points="0,-18 6.2,-15.6 8.7,-9.7 5.6,-4.3 -5.6,-4.3 -8.7,-9.7 -6.2,-15.6"
+             fill="url(#headGrad)" stroke="#7eb8e6" stroke-width="0.4" opacity="0.9"/>
+    <!-- Face detail — minimalist geometric -->
+    <circle cx="-2.5" cy="-11.5" r="0.8" fill="#0d1117" opacity="0.4"/>
+    <circle cx="2.5" cy="-11.5" r="0.8" fill="#0d1117" opacity="0.4"/>
+
+    <!-- Neck connection nodes -->
+    <circle cx="0" cy="-4.3" r="0.8" fill="#326ce5" opacity="0.5"/>
+
+    <!-- Constellation connection lines (wireframe effect) -->
+    <line x1="0" y1="-18" x2="-12" y2="-5" stroke="#7eb8e6" stroke-width="0.2" opacity="0.15"/>
+    <line x1="0" y1="-18" x2="12" y2="-5" stroke="#7eb8e6" stroke-width="0.2" opacity="0.15"/>
+    <line x1="-8.7" y1="-9.7" x2="-20" y2="-2" stroke="#7eb8e6" stroke-width="0.2" opacity="0.1"/>
+    <line x1="8.7" y1="-9.7" x2="20" y2="-2" stroke="#7eb8e6" stroke-width="0.2" opacity="0.1"/>
+
+    <!-- Body vertex nodes (constellation dots) -->
+    <circle cx="-12" cy="-5" r="0.7" fill="#326ce5" opacity="0.4"/>
+    <circle cx="12" cy="-5" r="0.7" fill="#326ce5" opacity="0.4"/>
+    <circle cx="-8" cy="22" r="0.6" fill="#326ce5" opacity="0.3"/>
+    <circle cx="8" cy="22" r="0.6" fill="#326ce5" opacity="0.3"/>
+  </g>
+
+  <!-- ==================== ORCHESTRATION LINES (from baton tip at 147, 112) ==================== -->
+  <g opacity="0.25">
+    <path d="M 147,112 Q 155,100 168,95" fill="none" stroke="#326ce5" stroke-width="0.4" stroke-dasharray="1.5,1.5"/>
+    <path d="M 147,112 Q 158,105 175,105" fill="none" stroke="#326ce5" stroke-width="0.4" stroke-dasharray="1.5,1.5"/>
+    <path d="M 147,112 Q 156,112 178,118" fill="none" stroke="#326ce5" stroke-width="0.4" stroke-dasharray="1.5,1.5"/>
+    <path d="M 147,112 Q 150,118 170,130" fill="none" stroke="#326ce5" stroke-width="0.4" stroke-dasharray="1.5,1.5"/>
+    <path d="M 147,112 Q 145,120 155,140" fill="none" stroke="#326ce5" stroke-width="0.4" stroke-dasharray="1.5,1.5"/>
+    <path d="M 147,112 Q 140,100 150,85" fill="none" stroke="#326ce5" stroke-width="0.35" stroke-dasharray="1.5,1.5"/>
+  </g>
+
+  <!-- ==================== KUBERNETES ELEMENTS ==================== -->
+
+  <!-- === Containers (closest to baton, small rounded rects) === -->
+
+  <!-- Container 1 -->
+  <g transform="translate(165, 90)">
+    <rect x="0" y="0" width="10" height="7" rx="1" fill="#326ce5" opacity="0.7"/>
+    <line x1="1" y1="2.5" x2="9" y2="2.5" stroke="#1a4a8a" stroke-width="0.3" opacity="0.5"/>
+    <line x1="1" y1="4.5" x2="9" y2="4.5" stroke="#1a4a8a" stroke-width="0.3" opacity="0.5"/>
+  </g>
+
+  <!-- Container 2 -->
+  <g transform="translate(178, 100)">
+    <rect x="0" y="0" width="10" height="7" rx="1" fill="#326ce5" opacity="0.6"/>
+    <line x1="1" y1="2.5" x2="9" y2="2.5" stroke="#1a4a8a" stroke-width="0.3" opacity="0.5"/>
+    <line x1="1" y1="4.5" x2="9" y2="4.5" stroke="#1a4a8a" stroke-width="0.3" opacity="0.5"/>
+  </g>
+
+  <!-- Container 3 -->
+  <g transform="translate(180, 115)">
+    <rect x="0" y="0" width="10" height="7" rx="1" fill="#326ce5" opacity="0.55"/>
+    <line x1="1" y1="2.5" x2="9" y2="2.5" stroke="#1a4a8a" stroke-width="0.3" opacity="0.5"/>
+    <line x1="1" y1="4.5" x2="9" y2="4.5" stroke="#1a4a8a" stroke-width="0.3" opacity="0.5"/>
+  </g>
+
+  <!-- Container 4 -->
+  <g transform="translate(150, 80)">
+    <rect x="0" y="0" width="9" height="6" rx="1" fill="#326ce5" opacity="0.5"/>
+    <line x1="1" y1="2" x2="8" y2="2" stroke="#1a4a8a" stroke-width="0.3" opacity="0.5"/>
+    <line x1="1" y1="4" x2="8" y2="4" stroke="#1a4a8a" stroke-width="0.3" opacity="0.5"/>
+  </g>
+
+  <!-- === Pods (groups of containers in dashed borders) === -->
+
+  <!-- Pod 1 (2 containers) -->
+  <g transform="translate(168, 128)">
+    <rect x="-2" y="-2" width="24" height="11" rx="2" fill="none" stroke="#27ae60" stroke-width="0.4" stroke-dasharray="1.5,1" opacity="0.6"/>
+    <rect x="0" y="0" width="9" height="6" rx="0.8" fill="#326ce5" opacity="0.45"/>
+    <line x1="1" y1="2" x2="8" y2="2" stroke="#1a4a8a" stroke-width="0.2" opacity="0.4"/>
+    <line x1="1" y1="4" x2="8" y2="4" stroke="#1a4a8a" stroke-width="0.2" opacity="0.4"/>
+    <rect x="11" y="0" width="9" height="6" rx="0.8" fill="#326ce5" opacity="0.45"/>
+    <line x1="12" y1="2" x2="19" y2="2" stroke="#1a4a8a" stroke-width="0.2" opacity="0.4"/>
+    <line x1="12" y1="4" x2="19" y2="4" stroke="#1a4a8a" stroke-width="0.2" opacity="0.4"/>
+  </g>
+
+  <!-- Pod 2 (3 containers) -->
+  <g transform="translate(152, 142)">
+    <rect x="-2" y="-2" width="35" height="11" rx="2" fill="none" stroke="#27ae60" stroke-width="0.4" stroke-dasharray="1.5,1" opacity="0.5"/>
+    <rect x="0" y="0" width="9" height="6" rx="0.8" fill="#326ce5" opacity="0.35"/>
+    <rect x="11" y="0" width="9" height="6" rx="0.8" fill="#326ce5" opacity="0.35"/>
+    <rect x="22" y="0" width="9" height="6" rx="0.8" fill="#326ce5" opacity="0.35"/>
+  </g>
+
+  <!-- Pod 3 (2 containers) -->
+  <g transform="translate(30, 130)">
+    <rect x="-2" y="-2" width="24" height="11" rx="2" fill="none" stroke="#27ae60" stroke-width="0.4" stroke-dasharray="1.5,1" opacity="0.4"/>
+    <rect x="0" y="0" width="9" height="6" rx="0.8" fill="#326ce5" opacity="0.3"/>
+    <rect x="11" y="0" width="9" height="6" rx="0.8" fill="#326ce5" opacity="0.3"/>
+  </g>
+
+  <!-- === Nodes (larger rounded rects with internal shelves) === -->
+
+  <!-- Node 1 -->
+  <g transform="translate(15, 95)">
+    <rect x="0" y="0" width="38" height="28" rx="3" fill="none" stroke="#8e44ad" stroke-width="0.5" opacity="0.45"/>
+    <!-- Node label area -->
+    <rect x="1" y="1" width="36" height="5" rx="1" fill="#8e44ad" opacity="0.12"/>
+    <text x="19" y="4.8" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+          font-size="2.5" fill="#8e44ad" opacity="0.5">Node</text>
+    <!-- Shelf line -->
+    <line x1="1" y1="7" x2="37" y2="7" stroke="#8e44ad" stroke-width="0.2" opacity="0.3"/>
+    <!-- Mini pods inside -->
+    <rect x="3" y="9" width="7" height="5" rx="0.8" fill="#326ce5" opacity="0.3"/>
+    <rect x="12" y="9" width="7" height="5" rx="0.8" fill="#326ce5" opacity="0.3"/>
+    <rect x="3" y="16" width="7" height="5" rx="0.8" fill="#326ce5" opacity="0.25"/>
+    <rect x="12" y="16" width="7" height="5" rx="0.8" fill="#326ce5" opacity="0.25"/>
+    <!-- Pod dashed borders inside node -->
+    <rect x="2" y="8" width="18" height="7" rx="1" fill="none" stroke="#27ae60" stroke-width="0.2" stroke-dasharray="1,0.8" opacity="0.3"/>
+    <rect x="2" y="15" width="18" height="7" rx="1" fill="none" stroke="#27ae60" stroke-width="0.2" stroke-dasharray="1,0.8" opacity="0.25"/>
+  </g>
+
+  <!-- Node 2 -->
+  <g transform="translate(15, 160)">
+    <rect x="0" y="0" width="35" height="24" rx="3" fill="none" stroke="#8e44ad" stroke-width="0.45" opacity="0.35"/>
+    <rect x="1" y="1" width="33" height="5" rx="1" fill="#8e44ad" opacity="0.1"/>
+    <text x="17.5" y="4.8" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+          font-size="2.5" fill="#8e44ad" opacity="0.4">Node</text>
+    <line x1="1" y1="7" x2="34" y2="7" stroke="#8e44ad" stroke-width="0.2" opacity="0.25"/>
+    <rect x="3" y="9" width="7" height="5" rx="0.8" fill="#326ce5" opacity="0.25"/>
+    <rect x="12" y="9" width="7" height="5" rx="0.8" fill="#326ce5" opacity="0.25"/>
+    <rect x="23" y="9" width="7" height="5" rx="0.8" fill="#326ce5" opacity="0.2"/>
+    <rect x="2" y="8" width="29" height="7" rx="1" fill="none" stroke="#27ae60" stroke-width="0.2" stroke-dasharray="1,0.8" opacity="0.25"/>
+  </g>
+
+  <!-- === Floating hexagons (scattered accents) === -->
+
+  <!-- Hexagon helper: side ~3mm -->
+  <g transform="translate(185, 88)" opacity="0.3">
+    <polygon points="3,0 6,1.7 6,5.2 3,6.9 0,5.2 0,1.7" fill="none" stroke="#e67e22" stroke-width="0.4"/>
+  </g>
+  <g transform="translate(195, 110)" opacity="0.2">
+    <polygon points="2.5,0 5,1.4 5,4.3 2.5,5.7 0,4.3 0,1.4" fill="none" stroke="#e74c3c" stroke-width="0.35"/>
+  </g>
+  <g transform="translate(160, 78)" opacity="0.25">
+    <polygon points="2,0 4,1.2 4,3.5 2,4.6 0,3.5 0,1.2" fill="none" stroke="#27ae60" stroke-width="0.35"/>
+  </g>
+  <g transform="translate(10, 85)" opacity="0.2">
+    <polygon points="3,0 6,1.7 6,5.2 3,6.9 0,5.2 0,1.7" fill="none" stroke="#e67e22" stroke-width="0.35"/>
+  </g>
+  <g transform="translate(55, 105)" opacity="0.15">
+    <polygon points="2.5,0 5,1.4 5,4.3 2.5,5.7 0,4.3 0,1.4" fill="none" stroke="#e74c3c" stroke-width="0.3"/>
+  </g>
+  <g transform="translate(45, 175)" opacity="0.18">
+    <polygon points="3,0 6,1.7 6,5.2 3,6.9 0,5.2 0,1.7" fill="none" stroke="#27ae60" stroke-width="0.35"/>
+  </g>
+  <g transform="translate(170, 160)" opacity="0.15">
+    <polygon points="2,0 4,1.2 4,3.5 2,4.6 0,3.5 0,1.2" fill="none" stroke="#e67e22" stroke-width="0.3"/>
+  </g>
+  <g transform="translate(190, 140)" opacity="0.12">
+    <polygon points="3.5,0 7,2 7,6 3.5,8 0,6 0,2" fill="none" stroke="#e74c3c" stroke-width="0.3"/>
+  </g>
+
+  <!-- === Additional ambient particles (small dots) === -->
+  <circle cx="25" cy="80" r="0.4" fill="#326ce5" opacity="0.2"/>
+  <circle cx="190" cy="85" r="0.5" fill="#7eb8e6" opacity="0.15"/>
+  <circle cx="175" cy="155" r="0.4" fill="#64b5f6" opacity="0.12"/>
+  <circle cx="60" cy="145" r="0.3" fill="#7eb8e6" opacity="0.15"/>
+  <circle cx="40" cy="120" r="0.35" fill="#326ce5" opacity="0.18"/>
+  <circle cx="195" cy="130" r="0.3" fill="#64b5f6" opacity="0.1"/>
+  <circle cx="85" cy="95" r="0.4" fill="#326ce5" opacity="0.12"/>
+  <circle cx="130" cy="180" r="0.35" fill="#7eb8e6" opacity="0.1"/>
+
+  <!-- ==================== ZONE E: AUTHORS ==================== -->
+
+  <!-- Separator line above authors -->
+  <line x1="55" y1="255" x2="155" y2="255" stroke="#326ce5" stroke-width="0.3" opacity="0.5"/>
+
+  <!-- Authors -->
+  <text x="105" y="272" text-anchor="middle"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="6.5" fill="#8899aa"
+        letter-spacing="0.4">Alnour Alharin &amp; Nevena Golubovic</text>
+
+  <!-- Decorative small kubernetes wheel below authors -->
+  <g transform="translate(105, 283)" opacity="0.08" fill="none" stroke="#ffffff" stroke-width="0.3">
+    <circle r="6"/>
+    <circle r="2"/>
+    <line x1="0" y1="-2" x2="0" y2="-6"/>
+    <line x1="1.8" y1="-0.9" x2="5.4" y2="-2.6"/>
+    <line x1="1.8" y1="0.9" x2="5.4" y2="2.6"/>
+    <line x1="0" y1="2" x2="0" y2="6"/>
+    <line x1="-1.8" y1="0.9" x2="-5.4" y2="2.6"/>
+    <line x1="-1.8" y1="-0.9" x2="-5.4" y2="-2.6"/>
+  </g>
+
+</svg>

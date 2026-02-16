@@ -1,0 +1,15 @@
+% Figure 1.1: Dijkstra's THE Multiprogramming System layer stack
+\begin{tikzpicture}[node distance=0.4cm, every node/.style={minimum width=6cm}]
+  \node[mnode, fill=cloudgray, text=darkblue]                        (L5) {Layer 5: The Operator (User)};
+  \node[mnode, fill=silvergray, text=darkblue, below=of L5]         (L4) {Layer 4: User Programs};
+  \node[mnode, fill=lightgray, text=darkblue, below=of L4]          (L3) {Layer 3: I/O Buffering};
+  \node[mnode, fill=k8sgray, below=of L3]                            (L2) {Layer 2: Console I/O};
+  \node[mnode, fill=sectioncolor, below=of L2]                       (L1) {Layer 1: Memory Management};
+  \node[mnode, fill=darkblue, below=of L1]                           (L0) {Layer 0: Processor Allocation};
+
+  \draw[arr] (L5) -- (L4);
+  \draw[arr] (L4) -- (L3);
+  \draw[arr] (L3) -- (L2);
+  \draw[arr] (L2) -- (L1);
+  \draw[arr] (L1) -- (L0);
+\end{tikzpicture}

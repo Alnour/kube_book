@@ -1,0 +1,35 @@
+% Figure 2.3: Kubernetes as a distributed microkernel
+\begin{tikzpicture}[node distance=0.4cm and 0.6cm]
+  % User Space - Pods
+  \node[mnode, fill=oceanblue, minimum width=2.2cm] (pod1) {Web Server Pod};
+  \node[mnode, fill=oceanblue, minimum width=2.2cm, right=of pod1] (pod2) {API Pod};
+  \node[mnode, fill=oceanblue, minimum width=2.2cm, right=of pod2] (pod3) {DB Pod};
+  \node[mnode, fill=oceanblue, minimum width=2.2cm, right=of pod3] (pod4) {Cache Pod};
+  \begin{scope}[on background layer]
+    \node[fit=(pod1)(pod4), subgraph={``User Space'' --- Application Pods}, fill=oceanblue!8, inner sep=14pt] (us) {};
+  \end{scope}
+
+  % Kernel Space - Control Plane
+  \node[mnode, fill=darkblue, minimum width=2cm, below=1.5cm of $(pod2.south)!0.5!(pod3.south)$, xshift=-1.5cm] (api) {API Server};
+  \node[mnode, fill=darkblue, minimum width=2cm, right=0.5cm of api] (sched) {Scheduler};
+  \node[mnode, fill=darkblue, minimum width=2cm, below=of api] (cm) {Controller Mgr};
+  \node[mnode, fill=darkblue, minimum width=2cm, below=of sched] (etcd) {etcd};
+  \draw[darr] (api) -- (sched);
+  \draw[darr] (api) -- (cm);
+  \draw[darr] (api) -- (etcd);
+  \begin{scope}[on background layer]
+    \node[fit=(api)(sched)(cm)(etcd), subgraph={``Kernel Space'' --- Control Plane}, fill=darkblue!5, inner sep=14pt] (ks) {};
+  \end{scope}
+
+  % Nodes
+  \node[mnode, fill=k8sgray, minimum width=2cm, below=1.5cm of cm, xshift=-0.5cm] (n1) {Node 1};
+  \node[mnode, fill=k8sgray, minimum width=2cm, right=0.5cm of n1] (n2) {Node 2};
+  \node[mnode, fill=k8sgray, minimum width=2cm, right=0.5cm of n2] (n3) {Node 3};
+  \begin{scope}[on background layer]
+    \node[fit=(n1)(n3), subgraph={Physical / Virtual Nodes}, fill=k8sgray!8, inner sep=14pt] {};
+  \end{scope}
+
+  \draw[arr] (pod1.south) -- (api);
+  \draw[arr] (pod4.south) -- (api);
+  \draw[arr] (ks) -- (n2);
+\end{tikzpicture}

@@ -1,0 +1,19 @@
+% Figure 3.1: Server utilization (early 2000s)
+\begin{tikzpicture}
+  \begin{axis}[
+    ybar,
+    width=8cm, height=6cm,
+    ylabel={Percentage of Server Resources},
+    symbolic x coords={Used Capacity, Idle / Wasted},
+    xtick=data,
+    ymin=0, ymax=100,
+    nodes near coords,
+    nodes near coords align={vertical},
+    bar width=1.8cm,
+    title style={font=\bfseries},
+    every node near coord/.append style={font=\small\bfseries},
+  ]
+  \addplot[fill=k8sred,   draw=k8sred!80]   coordinates {(Used Capacity, 12)};
+  \addplot[fill=lightgray, draw=lightgray!80] coordinates {(Idle / Wasted, 88)};
+  \end{axis}
+\end{tikzpicture}

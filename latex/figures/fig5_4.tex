@@ -1,0 +1,13 @@
+% Figure 5.4: The CAP Theorem triangle
+\begin{tikzpicture}
+  \node[mnode, fill=k8sgreen, minimum width=3.5cm, minimum height=1.2cm] (C) at (90:3)
+    {\textbf{Consistency (C)}\\{\scriptsize Every read gets the}\\{\scriptsize most recent write}};
+  \node[mnode, fill=lightgray, text=white, minimum width=3.5cm, minimum height=1.2cm] (A) at (210:3)
+    {\textbf{Availability (A)}\\{\scriptsize Every request gets}\\{\scriptsize a response}};
+  \node[mnode, fill=k8sgreen, minimum width=3.5cm, minimum height=1.2cm] (P) at (330:3)
+    {\textbf{Partition Tolerance (P)}\\{\scriptsize System works despite}\\{\scriptsize network splits}};
+
+  \draw[very thick, k8sgreen] (C) -- (P) node[midway, right=0.3cm, font=\small\bfseries, color=k8sgreen, text width=3cm, align=center] {CP $\leftarrow$ etcd / K8s\\choose this};
+  \draw[thick, gray] (C) -- (A);
+  \draw[thick, gray] (A) -- (P);
+\end{tikzpicture}

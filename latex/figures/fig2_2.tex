@@ -1,0 +1,29 @@
+% Figure 2.2: Monolith vs. microservices
+\begin{tikzpicture}[node distance=0.4cm and 0.4cm]
+  % --- Monolith ---
+  \node[mnode, fill=k8sred, font=\scriptsize, minimum width=1.5cm] (m_ui)   {UI};
+  \node[mnode, fill=k8sred, font=\scriptsize, minimum width=1.5cm, right=of m_ui]   (m_cat)  {Catalog};
+  \node[mnode, fill=k8sred, font=\scriptsize, minimum width=1.5cm, right=of m_cat]  (m_cart) {Cart};
+  \node[mnode, fill=darkred, font=\scriptsize, minimum width=1.5cm, right=of m_cart] (m_bill) {Billing \textbf{!}};
+  \node[mnode, fill=k8sred, font=\scriptsize, minimum width=1.5cm, right=of m_bill] (m_rev)  {Reviews};
+  \draw[thick, k8sred] (m_ui) -- (m_cat) -- (m_cart) -- (m_bill) -- (m_rev);
+  \node[below=0.5cm of m_cart, font=\small\itshape, color=k8sred] {Billing crash = ENTIRE APP DOWN};
+  \begin{scope}[on background layer]
+    \node[fit=(m_ui)(m_rev), subgraph={Monolith Application}, fill=k8sred!5, inner sep=14pt] {};
+  \end{scope}
+
+  % --- Microservices ---
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=1.5cm, below=2.5cm of m_ui] (s_ui)   {UI \checkmark};
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=1.5cm, right=of s_ui]   (s_cat)  {Catalog \checkmark};
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=1.5cm, right=of s_cat]  (s_cart) {Cart \checkmark};
+  \node[mnode, fill=k8sred,   font=\scriptsize, minimum width=1.5cm, right=of s_cart] (s_bill) {Billing \textbf{!}};
+  \node[mnode, fill=k8sgreen, font=\scriptsize, minimum width=1.5cm, right=of s_bill] (s_rev)  {Reviews \checkmark};
+  \draw[darr, k8sgreen] (s_ui) -- (s_cat);
+  \draw[darr, k8sgreen] (s_ui) -- (s_cart);
+  \draw[darr, k8sred]   (s_ui) -- (s_bill);
+  \draw[darr, k8sgreen] (s_ui) -- (s_rev);
+  \node[below=0.5cm of s_cart, font=\small\itshape, color=k8sgreen] {Billing crash = only billing affected};
+  \begin{scope}[on background layer]
+    \node[fit=(s_ui)(s_rev), subgraph={Microservices Application}, fill=k8sgreen!5, inner sep=14pt] {};
+  \end{scope}
+\end{tikzpicture}

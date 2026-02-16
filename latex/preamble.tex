@@ -1,0 +1,136 @@
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage{amsmath, amssymb}
+
+% TikZ
+\usepackage{tikz}
+\usetikzlibrary{
+  shapes.geometric,
+  arrows.meta,
+  positioning,
+  calc,
+  fit,
+  backgrounds,
+  decorations.pathreplacing,
+  patterns
+}
+
+% pgfplots for bar charts
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Code listings
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  breakatwhitespace=false,
+  frame=single,
+  backgroundcolor=\color{codebg},
+  rulecolor=\color{codeframe},
+  numbers=none,
+  tabsize=2,
+  showstringspaces=false,
+  captionpos=b,
+  aboveskip=10pt,
+  belowskip=10pt,
+  xleftmargin=4pt,
+  xrightmargin=4pt,
+  framexleftmargin=2pt,
+  columns=flexible,
+  literate={-}{-}1,
+}
+
+% YAML language definition for listings
+\lstdefinelanguage{yaml}{
+  keywords={true,false,null,yes,no},
+  sensitive=false,
+  comment=[l]{\#},
+  morestring=[b]',
+  morestring=[b]",
+}
+
+% Bibliography
+\usepackage[backend=biber, style=authoryear, sorting=nyt, maxbibnames=99]{biblatex}
+\addbibresource{references.bib}
+
+% Fancy headers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RO]{\rightmark}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Chapter styling
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{darkblue}}
+  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-20pt}{30pt}
+
+% Section colors
+\titleformat{\section}{\normalfont\Large\bfseries\color{sectioncolor}}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries\color{oceanblue}}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\bfseries\color{darkblue}}{\thesubsubsection}{1em}{}
+
+% -----------------------------------------------------------------------
+% Color definitions (matching Mermaid palette)
+% -----------------------------------------------------------------------
+\definecolor{darkblue}{HTML}{2C3E50}
+\definecolor{k8sgreen}{HTML}{27AE60}
+\definecolor{k8sred}{HTML}{E74C3C}
+\definecolor{oceanblue}{HTML}{2980B9}
+\definecolor{k8spurple}{HTML}{8E44AD}
+\definecolor{k8sorange}{HTML}{E67E22}
+\definecolor{k8sgray}{HTML}{7F8C8D}
+\definecolor{lightgray}{HTML}{95A5A6}
+\definecolor{silvergray}{HTML}{BDC3C7}
+\definecolor{cloudgray}{HTML}{ECF0F1}
+\definecolor{sectioncolor}{HTML}{34495E}
+\definecolor{k8sblue}{HTML}{326CE5}
+\definecolor{codebg}{HTML}{F8F8F8}
+\definecolor{codeframe}{HTML}{DDDDDD}
+\definecolor{warnorange}{HTML}{F39C12}
+\definecolor{darkred}{HTML}{C0392B}
+
+% -----------------------------------------------------------------------
+% Reusable TikZ styles
+% -----------------------------------------------------------------------
+\tikzset{
+  mnode/.style={
+    rectangle, rounded corners=4pt, minimum width=2.2cm,
+    minimum height=0.9cm, text centered, font=\small,
+    draw=none, text=white, inner sep=4pt,
+  },
+  darkblue node/.style={mnode, fill=darkblue},
+  green node/.style={mnode, fill=k8sgreen},
+  red node/.style={mnode, fill=k8sred},
+  blue node/.style={mnode, fill=oceanblue},
+  purple node/.style={mnode, fill=k8spurple},
+  orange node/.style={mnode, fill=k8sorange},
+  gray node/.style={mnode, fill=k8sgray},
+  lightgray node/.style={mnode, fill=lightgray, text=darkblue},
+  silver node/.style={mnode, fill=silvergray, text=darkblue},
+  cloud node/.style={mnode, fill=cloudgray, text=darkblue},
+  k8sblue node/.style={mnode, fill=k8sblue},
+  warn node/.style={mnode, fill=warnorange},
+  subgraph/.style={
+    draw=gray, dashed, rounded corners=6pt, inner sep=10pt,
+    fill=none, label={[font=\small\bfseries, anchor=north west]north west:#1},
+  },
+  arr/.style={-{Stealth[length=6pt]}, thick},
+  darr/.style={<->{Stealth[length=6pt]}, thick},
+}
+
+% -----------------------------------------------------------------------
+% Custom commands
+% -----------------------------------------------------------------------
+\newcommand{\code}[1]{\texttt{#1}}

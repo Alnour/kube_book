@@ -1,0 +1,35 @@
+% Figure 1.2: Kubernetes interface layers
+\begin{tikzpicture}[node distance=0.6cm and 1.2cm]
+  % Core
+  \node[mnode, fill=k8sblue, minimum width=3.5cm] (k8s) {Kubernetes Control Plane};
+
+  % Interfaces
+  \node[mnode, fill=oceanblue, right=2cm of k8s, yshift=1.2cm] (csi) {CSI -- Storage};
+  \node[mnode, fill=oceanblue, right=2cm of k8s]               (cni) {CNI -- Networking};
+  \node[mnode, fill=oceanblue, right=2cm of k8s, yshift=-1.2cm](cri) {CRI -- Runtime};
+
+  % Implementations
+  \node[mnode, fill=lightgray, text=darkblue, right=1.8cm of csi, yshift=0.6cm, minimum width=1.8cm, font=\scriptsize] (ebs)  {Amazon EBS};
+  \node[mnode, fill=lightgray, text=darkblue, right=1.8cm of csi, yshift=-0.6cm, minimum width=1.8cm, font=\scriptsize] (gce)  {GCE PD};
+
+  \node[mnode, fill=lightgray, text=darkblue, right=1.8cm of cni, yshift=0.6cm, minimum width=1.8cm, font=\scriptsize] (calico) {Calico};
+  \node[mnode, fill=lightgray, text=darkblue, right=1.8cm of cni, yshift=-0.6cm, minimum width=1.8cm, font=\scriptsize] (cilium) {Cilium};
+
+  \node[mnode, fill=lightgray, text=darkblue, right=1.8cm of cri, yshift=0.6cm, minimum width=1.8cm, font=\scriptsize] (ctrd) {containerd};
+  \node[mnode, fill=lightgray, text=darkblue, right=1.8cm of cri, yshift=-0.6cm, minimum width=1.8cm, font=\scriptsize] (crio) {CRI-O};
+
+  \draw[arr] (k8s) -- (csi);
+  \draw[arr] (k8s) -- (cni);
+  \draw[arr] (k8s) -- (cri);
+  \draw[arr] (csi) -- (ebs);
+  \draw[arr] (csi) -- (gce);
+  \draw[arr] (cni) -- (calico);
+  \draw[arr] (cni) -- (cilium);
+  \draw[arr] (cri) -- (ctrd);
+  \draw[arr] (cri) -- (crio);
+
+  % Labels
+  \node[above=0.3cm of k8s, font=\small\bfseries, color=darkblue] {Core};
+  \node[above=0.3cm of cni, font=\small\bfseries, color=darkblue, yshift=1.2cm] {Standard Interfaces};
+  \node[above=0.3cm of calico, font=\small\bfseries, color=darkblue, yshift=0.6cm] {Implementations};
+\end{tikzpicture}

@@ -1,0 +1,24 @@
+% Figure 5.6: etcd watch and controller flow
+\begin{tikzpicture}
+  % Actors
+  \node[mnode, fill=darkblue, minimum width=1.6cm] (user) at (0,0) {User};
+  \node[mnode, fill=k8sblue, minimum width=1.6cm] (api)  at (3.2,0) {API Server};
+  \node[mnode, fill=k8sgreen, minimum width=1.6cm] (etcd) at (6.4,0) {etcd};
+  \node[mnode, fill=k8spurple, minimum width=1.6cm] (ctrl) at (9.6,0) {Controller};
+
+  % Lifelines
+  \draw[dashed, gray] (0,-0.5) -- (0,-8);
+  \draw[dashed, gray] (3.2,-0.5) -- (3.2,-8);
+  \draw[dashed, gray] (6.4,-0.5) -- (6.4,-8);
+  \draw[dashed, gray] (9.6,-0.5) -- (9.6,-8);
+
+  % Messages
+  \draw[arr] (0,-1.2) -- node[above, font=\scriptsize] {Apply YAML} (3.2,-1.2);
+  \draw[arr] (3.2,-2) -- node[above, font=\scriptsize] {Store desired state} (6.4,-2);
+  \draw[arr, dashed, k8sgreen] (6.4,-3) -- node[above, font=\scriptsize] {Watch notification} (9.6,-3);
+  \draw[arr, k8spurple] (9.6,-3.8) -- (9.6,-4.3) node[right, font=\scriptsize] {Compare desired vs observed};
+  \draw[arr] (9.6,-5) -- node[above, font=\scriptsize] {Take action} (3.2,-5);
+  \draw[arr] (3.2,-5.8) -- node[above, font=\scriptsize] {Update state} (6.4,-5.8);
+
+  \node[fill=k8spurple!15, rounded corners, font=\scriptsize, inner sep=4pt] at (8,-7) {Loop continues\ldots};
+\end{tikzpicture}

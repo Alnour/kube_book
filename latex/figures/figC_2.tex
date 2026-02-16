@@ -1,0 +1,34 @@
+% Figure C.2: The future Kubernetes stack
+\begin{tikzpicture}[node distance=0.5cm and 0.5cm]
+  % Control Plane
+  \node[mnode, fill=k8sblue, minimum width=2.5cm] (api) {API Server};
+  \node[mnode, fill=k8sblue, minimum width=2.5cm, right=of api] (sched) {Scheduler};
+  \node[mnode, fill=k8sblue, minimum width=2.5cm, right=of sched] (cm) {Controller Manager};
+  \begin{scope}[on background layer]
+    \node[fit=(api)(cm), subgraph={Kubernetes Control Plane}, fill=k8sblue!8, inner sep=14pt] (cp) {};
+  \end{scope}
+
+  % Workloads
+  \node[mnode, fill=oceanblue, minimum width=3.5cm, below=1.5cm of api, xshift=0.5cm] (cont) {Containers\\(traditional)};
+  \node[mnode, fill=k8spurple, minimum width=3.5cm, right=0.8cm of cont] (wasm) {Wasm Modules\\(microsecond startup)};
+  \begin{scope}[on background layer]
+    \node[fit=(cont)(wasm), subgraph={Managed Workloads}, fill=oceanblue!5, inner sep=14pt] (wl) {};
+  \end{scope}
+
+  % Kernel
+  \node[mnode, fill=darkblue, minimum width=2.5cm, below=1.5cm of cont, xshift=1cm] (ebpf) {eBPF Programs};
+  \node[mnode, fill=darkblue, minimum width=2cm, below=0.5cm of ebpf, xshift=-2cm] (net) {Networking\\(Cilium)};
+  \node[mnode, fill=darkblue, minimum width=2cm, right=0.3cm of net] (sec) {Security\\(enforcement)};
+  \node[mnode, fill=darkblue, minimum width=2cm, right=0.3cm of sec] (obs) {Observability\\(tracing)};
+  \draw[arr, white] (ebpf) -- (net);
+  \draw[arr, white] (ebpf) -- (sec);
+  \draw[arr, white] (ebpf) -- (obs);
+  \begin{scope}[on background layer]
+    \node[fit=(ebpf)(net)(obs), subgraph={Linux Kernel}, fill=darkblue!5, inner sep=14pt] (kern) {};
+  \end{scope}
+
+  \draw[arr] (cp) -- (cont);
+  \draw[arr] (cp) -- (wasm);
+  \draw[arr] (cont.south) -- (kern.north -| cont.south);
+  \draw[arr] (wasm.south) -- (kern.north -| wasm.south);
+\end{tikzpicture}

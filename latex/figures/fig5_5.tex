@@ -1,0 +1,28 @@
+% Figure 5.5: Raft consensus in etcd
+\begin{tikzpicture}
+  % Actors
+  \node[mnode, fill=darkblue, minimum width=1.8cm] (client) at (0,0) {Client};
+  \node[mnode, fill=k8sgreen, minimum width=1.8cm] (leader) at (3.5,0) {etcd Leader};
+  \node[mnode, fill=oceanblue, minimum width=1.8cm] (f1) at (7,0) {Follower 1};
+  \node[mnode, fill=oceanblue, minimum width=1.8cm] (f2) at (10.5,0) {Follower 2};
+
+  % Lifelines
+  \draw[dashed, gray] (0,-0.5) -- (0,-8);
+  \draw[dashed, gray] (3.5,-0.5) -- (3.5,-8);
+  \draw[dashed, gray] (7,-0.5) -- (7,-8);
+  \draw[dashed, gray] (10.5,-0.5) -- (10.5,-8);
+
+  % Messages
+  \draw[arr] (0,-1.2) -- node[above, font=\scriptsize] {Write request} (3.5,-1.2);
+  \draw[arr, darkblue] (3.5,-2) -- (3.5,-2.5) node[right, font=\scriptsize] {Append to local log};
+  \draw[arr] (3.5,-3) -- node[above, font=\scriptsize] {Replicate entry} (7,-3.5);
+  \draw[arr] (3.5,-3) -- node[above, font=\scriptsize] {} (10.5,-3.5);
+  \draw[arr, dashed, k8sgreen] (7,-4.2) -- node[above, font=\scriptsize] {ACK} (3.5,-4.7);
+  \draw[arr, dashed, k8sgreen] (10.5,-4.5) -- node[above, font=\scriptsize] {ACK} (3.5,-5);
+
+  % Quorum note
+  \node[fill=k8sgreen!15, rounded corners, font=\scriptsize, inner sep=4pt] at (5.2,-5.7) {Quorum reached (2/3)};
+
+  \draw[arr, darkblue] (3.5,-6.2) -- (3.5,-6.7) node[right, font=\scriptsize] {Commit entry};
+  \draw[arr, dashed, k8sgreen] (3.5,-7.3) -- node[above, font=\scriptsize] {Write confirmed \checkmark} (0,-7.3);
+\end{tikzpicture}

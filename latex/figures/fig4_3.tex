@@ -1,0 +1,55 @@
+% Figure 4.3: Evolution from Borg to Omega to Kubernetes
+\begin{tikzpicture}[node distance=0.3cm and 0.3cm, every node/.style={font=\scriptsize}]
+  % --- Borg ---
+  \node[mnode, fill=k8sorange, minimum width=2.8cm] (bm) {BorgMaster\\(monolithic)};
+  \node[mnode, fill=k8sorange, minimum width=1.3cm, below=0.5cm of bm, xshift=-0.7cm] (bs) {Scheduler};
+  \node[mnode, fill=k8sorange, minimum width=1.3cm, right=0.2cm of bs] (bst) {State\\(in-memory)};
+  \node[mnode, fill=k8sorange!60, minimum width=0.8cm, below=0.5cm of bs, xshift=-0.4cm] (bn1) {N};
+  \node[mnode, fill=k8sorange!60, minimum width=0.8cm, right=0.15cm of bn1] (bn2) {N};
+  \node[mnode, fill=k8sorange!60, minimum width=0.8cm, right=0.15cm of bn2] (bn3) {N};
+  \draw[arr] (bm) -- (bs);
+  \draw[arr] (bm) -- (bst);
+  \draw[arr] (bs) -- (bn1);
+  \draw[arr] (bs) -- (bn2);
+  \draw[arr] (bs) -- (bn3);
+  \begin{scope}[on background layer]
+    \node[fit=(bm)(bn1)(bn3)(bst), subgraph={Borg (1st Gen)}, fill=k8sorange!5, inner sep=12pt] {};
+  \end{scope}
+
+  % --- Omega ---
+  \node[mnode, fill=oceanblue, minimum width=1.4cm, right=2.5cm of bm, yshift=-0.2cm] (os1) {Sched A\\(web)};
+  \node[mnode, fill=oceanblue, minimum width=1.4cm, right=0.3cm of os1] (os2) {Sched B\\(batch)};
+  \node[mnode, fill=oceanblue, minimum width=3.2cm, below=0.5cm of $(os1.south)!0.5!(os2.south)$]
+    (ost) {Shared State (Paxos)};
+  \node[mnode, fill=oceanblue!60, minimum width=0.8cm, below=0.5cm of ost, xshift=-0.9cm] (on1) {N};
+  \node[mnode, fill=oceanblue!60, minimum width=0.8cm, right=0.15cm of on1] (on2) {N};
+  \node[mnode, fill=oceanblue!60, minimum width=0.8cm, right=0.15cm of on2] (on3) {N};
+  \draw[arr] (os1) -- (ost);
+  \draw[arr] (os2) -- (ost);
+  \draw[arr] (ost) -- (on1);
+  \draw[arr] (ost) -- (on2);
+  \draw[arr] (ost) -- (on3);
+  \begin{scope}[on background layer]
+    \node[fit=(os1)(os2)(on1)(on3)(ost), subgraph={Omega (2nd Gen)}, fill=oceanblue!5, inner sep=12pt] {};
+  \end{scope}
+
+  % --- Kubernetes ---
+  \node[mnode, fill=k8sgreen, minimum width=2.8cm, right=2.5cm of os1, xshift=0.5cm] (api) {API Server\\(single gateway)};
+  \node[mnode, fill=k8sgreen, minimum width=1.3cm, below=0.5cm of api, xshift=-0.9cm] (ks) {Scheduler};
+  \node[mnode, fill=k8sgreen, minimum width=1.3cm, right=0.2cm of ks] (kcm) {Controller\\Manager};
+  \node[mnode, fill=k8sgreen, minimum width=2.8cm, below=0.4cm of $(ks.south)!0.5!(kcm.south)$]
+    (etcd) {etcd (distributed KV)};
+  \node[mnode, fill=k8sgreen!60, minimum width=0.8cm, below=0.5cm of etcd, xshift=-0.9cm] (kn1) {N};
+  \node[mnode, fill=k8sgreen!60, minimum width=0.8cm, right=0.15cm of kn1] (kn2) {N};
+  \node[mnode, fill=k8sgreen!60, minimum width=0.8cm, right=0.15cm of kn2] (kn3) {N};
+  \draw[darr] (api) -- (ks);
+  \draw[darr] (api) -- (kcm);
+  \draw[darr] (api) -- (etcd);
+  \draw[arr] (api.east) -- ++(0.6,0) node[right, font=\tiny, text=k8sgreen] {CRDs,\\Operators};
+  \draw[arr] (etcd) -- (kn1);
+  \draw[arr] (etcd) -- (kn2);
+  \draw[arr] (etcd) -- (kn3);
+  \begin{scope}[on background layer]
+    \node[fit=(api)(ks)(kcm)(etcd)(kn1)(kn3), subgraph={Kubernetes (3rd Gen)}, fill=k8sgreen!5, inner sep=12pt] {};
+  \end{scope}
+\end{tikzpicture}

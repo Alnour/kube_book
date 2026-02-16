@@ -25,6 +25,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_INPUT = os.path.join(SCRIPT_DIR, "Learning_Kubernetes_Complete.md")
 DEFAULT_OUTPUT = os.path.join(SCRIPT_DIR, "Learning_Kubernetes_Complete.pdf")
 MMDC = os.path.join(SCRIPT_DIR, "node_modules", ".bin", "mmdc")
+COVER_SVG = os.path.join(SCRIPT_DIR, "cover.svg")
+COVER_PNG = os.path.join(SCRIPT_DIR, "cover.png")
 
 CSS = """
 @page {
@@ -183,6 +185,64 @@ th {
 p > strong:first-child {
     display: inline;
 }
+
+/* Cover page */
+@page cover {
+    size: A4;
+    margin: 0;
+    @bottom-center { content: none; }
+}
+.cover-page {
+    page: cover;
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    page-break-after: always;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #0d1117;
+}
+.cover-page img.cover-bg {
+    width: 210mm;
+    height: 297mm;
+    display: block;
+    object-fit: cover;
+}
+.cover-text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.cover-title-top {
+    top: 18mm;
+    font-size: 16pt;
+    font-weight: 300;
+    color: #7eb8e6;
+    letter-spacing: 3pt;
+}
+.cover-title-main {
+    top: 28mm;
+    font-size: 28pt;
+    font-weight: bold;
+    color: #ffffff;
+    letter-spacing: 2pt;
+}
+.cover-subtitle {
+    top: 40mm;
+    font-size: 9pt;
+    font-weight: 300;
+    color: #7eb8e6;
+    letter-spacing: 0.5pt;
+}
+.cover-authors {
+    bottom: 14mm;
+    font-size: 9pt;
+    color: #8899aa;
+    letter-spacing: 0.5pt;
+}
 """
 
 
@@ -251,6 +311,38 @@ def render_mermaid_blocks(md_text, tmp_dir):
     return result
 
 
+def render_cover():
+    """Render cover image as an HTML block for the first page of the PDF.
+    Prefers cover.png, falls back to cover.svg."""
+
+    # Determine which cover file to use
+    if os.path.isfile(COVER_PNG):
+        cover_path = COVER_PNG
+        mime = "image/png"
+    elif os.path.isfile(COVER_SVG):
+        cover_path = COVER_SVG
+        mime = "image/svg+xml"
+    else:
+        print("  No cover image found — skipping cover page")
+        return ""
+
+    print(f"  Rendering cover page from {os.path.basename(cover_path)}...")
+
+    with open(cover_path, "rb") as f:
+        img_data = f.read()
+    b64 = base64.b64encode(img_data).decode("ascii")
+    data_uri = f"data:{mime};base64,{b64}"
+    print(f"    Cover: {os.path.basename(cover_path)} ({len(img_data) // 1024} KB)")
+
+    return f'''<div class="cover-page">
+  <img class="cover-bg" src="{data_uri}" alt="Cover"/>
+  <div class="cover-text cover-title-top">Learning</div>
+  <div class="cover-text cover-title-main">Kubernetes</div>
+  <div class="cover-text cover-subtitle">A Simple Journey From The Beginning</div>
+  <div class="cover-text cover-authors">Alnour Alharin &amp; Nevena Golubovic</div>
+</div>'''
+
+
 def convert_md_to_pdf(input_path, output_path):
     """Convert a markdown file to PDF."""
     print(f"Reading: {input_path}")
@@ -269,6 +361,9 @@ def convert_md_to_pdf(input_path, output_path):
             extension_configs={"codehilite": {"guess_lang": False}},
         )
 
+        # Render cover page
+        cover_html = render_cover()
+
         # Wrap in full HTML document
         html_doc = f"""<!DOCTYPE html>
 <html lang="en">
@@ -277,6 +372,7 @@ def convert_md_to_pdf(input_path, output_path):
     <style>{CSS}</style>
 </head>
 <body>
+{cover_html}
 {html_body}
 </body>
 </html>"""

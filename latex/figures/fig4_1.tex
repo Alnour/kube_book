@@ -1,0 +1,20 @@
+% Figure 4.1: Annual failures per ~1,800-server cluster
+\begin{tikzpicture}
+  \begin{axis}[
+    ybar,
+    width=10cm, height=6cm,
+    ylabel={Number of Failures},
+    symbolic x coords={Machine, Disk, Rack, Power},
+    xtick=data,
+    ymin=0, ymax=5000,
+    nodes near coords,
+    nodes near coords align={vertical},
+    bar width=1.5cm,
+    every node near coord/.append style={font=\small\bfseries},
+    title={\bfseries Annual Failures per $\sim$1{,}800-Server Cluster},
+  ]
+  \addplot[fill=k8sorange, draw=k8sorange!80] coordinates {
+    (Machine, 1000) (Disk, 4000) (Rack, 20) (Power, 1)
+  };
+  \end{axis}
+\end{tikzpicture}

@@ -1,0 +1,27 @@
+% Figure 6.1: CRD registration flow
+\begin{tikzpicture}
+  % Actors
+  \node[mnode, fill=darkblue, minimum width=1.6cm] (admin) at (0,0) {Admin};
+  \node[mnode, fill=k8sblue, minimum width=1.6cm] (api) at (4,0) {API Server};
+  \node[mnode, fill=k8sgreen, minimum width=1.6cm] (etcd) at (8,0) {etcd};
+
+  % Lifelines
+  \draw[dashed, gray] (0,-0.5) -- (0,-10);
+  \draw[dashed, gray] (4,-0.5) -- (4,-10);
+  \draw[dashed, gray] (8,-0.5) -- (8,-10);
+
+  % Phase 1: Register CRD
+  \draw[arr] (0,-1.2) -- node[above, font=\scriptsize] {Register CRD (MySQLCluster schema)} (4,-1.2);
+  \draw[arr] (4,-2) -- node[above, font=\scriptsize] {Store CRD definition} (8,-2);
+  \draw[arr, dashed, k8sgreen] (4,-2.8) -- node[above, font=\scriptsize] {CRD registered \checkmark} (0,-2.8);
+
+  \node[fill=k8sblue!15, rounded corners, font=\scriptsize, inner sep=4pt] at (6,-3.8) {API Server now understands ``MySQLCluster''};
+
+  % Phase 2: Create resource
+  \draw[arr] (0,-5) -- node[above, font=\scriptsize] {Create MySQLCluster ``my-prod-db''} (4,-5);
+  \draw[arr, k8sblue] (4,-5.8) -- (4,-6.3) node[right, font=\scriptsize] {Validate against CRD schema};
+  \draw[arr] (4,-7) -- node[above, font=\scriptsize] {Store custom resource} (8,-7);
+  \draw[arr, dashed, k8sgreen] (4,-7.8) -- node[above, font=\scriptsize] {MySQLCluster created \checkmark} (0,-7.8);
+
+  \node[fill=k8sgreen!15, rounded corners, font=\scriptsize, inner sep=4pt] at (3,-9) {\code{kubectl get mysqlclusters} now works!};
+\end{tikzpicture}

@@ -1,0 +1,40 @@
+% Figure 1.4: VM vs Container vs Kata Containers
+\begin{tikzpicture}[node distance=0.3cm, every node/.style={minimum width=3cm, font=\scriptsize}]
+  % VM Stack
+  \node[mnode, fill=k8sred] (vm_app) {Application};
+  \node[mnode, fill=k8sred, below=of vm_app] (vm_lib) {Libraries / Bins};
+  \node[mnode, fill=k8sred, below=of vm_lib] (vm_guest) {Guest OS (full kernel)};
+  \node[mnode, fill=k8sred, below=of vm_guest] (vm_hyp) {Hypervisor};
+  \node[mnode, fill=k8sred, below=of vm_hyp] (vm_hw) {Hardware};
+  \draw[arr] (vm_app) -- (vm_lib);
+  \draw[arr] (vm_lib) -- (vm_guest);
+  \draw[arr] (vm_guest) -- (vm_hyp);
+  \draw[arr] (vm_hyp) -- (vm_hw);
+  \node[above=0.2cm of vm_app, font=\small\bfseries, color=k8sred] {Virtual Machine};
+
+  % Container Stack
+  \node[mnode, fill=oceanblue, right=1.5cm of vm_app] (c_app) {Application};
+  \node[mnode, fill=oceanblue, below=of c_app] (c_lib) {Libraries / Bins};
+  \node[mnode, fill=oceanblue, below=of c_lib] (c_rt) {Container Runtime};
+  \node[mnode, fill=oceanblue, below=of c_rt] (c_host) {Host OS (shared kernel)};
+  \node[mnode, fill=oceanblue, below=of c_host] (c_hw) {Hardware};
+  \draw[arr] (c_app) -- (c_lib);
+  \draw[arr] (c_lib) -- (c_rt);
+  \draw[arr] (c_rt) -- (c_host);
+  \draw[arr] (c_host) -- (c_hw);
+  \node[above=0.2cm of c_app, font=\small\bfseries, color=oceanblue] {Container};
+
+  % Kata Stack
+  \node[mnode, fill=k8spurple, right=1.5cm of c_app] (k_app) {Application};
+  \node[mnode, fill=k8spurple, below=of k_app] (k_lib) {Libraries / Bins};
+  \node[mnode, fill=k8spurple, below=of k_lib] (k_micro) {Lightweight Micro-VM};
+  \node[mnode, fill=k8spurple, below=of k_micro] (k_hyp) {Hypervisor};
+  \node[mnode, fill=k8spurple, below=of k_hyp] (k_host) {Host OS};
+  \node[mnode, fill=k8spurple, below=of k_host] (k_hw) {Hardware};
+  \draw[arr] (k_app) -- (k_lib);
+  \draw[arr] (k_lib) -- (k_micro);
+  \draw[arr] (k_micro) -- (k_hyp);
+  \draw[arr] (k_hyp) -- (k_host);
+  \draw[arr] (k_host) -- (k_hw);
+  \node[above=0.2cm of k_app, font=\small\bfseries, color=k8spurple] {Kata Container};
+\end{tikzpicture}

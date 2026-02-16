@@ -1,0 +1,24 @@
+% Figure 6.2: Operator reconciliation loop for MySQL cluster
+\begin{tikzpicture}[node distance=0.5cm and 0.8cm]
+  \node[mnode, fill=k8sblue, minimum width=2.5cm] (watch) {Watch Trigger:\\MySQLCluster created};
+  \node[mnode, fill=darkblue, minimum width=2.5cm, below=of watch] (primary) {Create Primary\\Instance};
+  \node[mnode, fill=darkblue, minimum width=2.5cm, below=of primary] (snap) {Take Data\\Snapshot};
+  \node[mnode, fill=darkblue, minimum width=2.5cm, below=of snap] (r1) {Start Replica 1\\+ Sync};
+  \node[mnode, fill=darkblue, minimum width=2.5cm, below=of r1] (r2) {Start Replica 2\\+ Sync};
+  \node[mnode, fill=darkblue, minimum width=2.5cm, below=of r2] (backup) {Create Backup\\CronJob};
+  \node[mnode, fill=k8sgreen, minimum width=2.5cm, below=of backup] (steady) {Steady State \checkmark\\(desired = observed)};
+
+  \draw[arr] (watch) -- (primary);
+  \draw[arr] (primary) -- (snap);
+  \draw[arr] (snap) -- (r1);
+  \draw[arr] (r1) -- (r2);
+  \draw[arr] (r2) -- (backup);
+  \draw[arr] (backup) -- (steady);
+  \draw[arr, k8sgreen] (steady.east) -- ++(0.5,0) |- node[near start, right, font=\tiny] {monitoring} (steady.east);
+
+  % Crash recovery
+  \node[mnode, fill=k8sred, minimum width=2.5cm, right=3.5cm of r1] (crash) {Replica Crash \textbf{!}};
+  \node[mnode, fill=warnorange, minimum width=2.5cm, below=of crash] (resync) {Check Lag\\Fresh Snapshot\\Resync New Pod};
+  \draw[arr] (crash) -- (resync);
+  \draw[arr, k8sgreen] (resync) -| (steady);
+\end{tikzpicture}

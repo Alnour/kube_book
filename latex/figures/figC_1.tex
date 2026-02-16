@@ -1,0 +1,26 @@
+% Figure C.1: 50-year timeline of ideas leading to Kubernetes
+\begin{tikzpicture}
+  \draw[very thick, darkblue] (0,0) -- (0,-14);
+
+  \foreach \y/\year/\event in {
+    0/1968/Dijkstra --- Layered architecture (THE system),
+    -1.4/1974/Unix --- Processes \& isolation,
+    -2.8/1974/Popek \& Goldberg --- VM formalization,
+    -4.2/1995/Liedtke --- Microkernel philosophy (L4),
+    -5.6/2003/Xen --- Paravirtualization,
+    -7.0/2007/KVM --- Linux becomes a hypervisor,
+    -8.4/2008/Google --- Borg \& failure-as-normal,
+    -9.8/2013/Omega \& Docker --- Shared state + containers,
+    -11.2/2014/Kubernetes --- Open-source orchestration,
+    -12.6/2016+/CRDs \& Operators --- Extensible platform%
+  } {
+    \fill[darkblue] (0,\y) circle (3pt);
+    \node[right=0.5cm, font=\small, text=darkblue, anchor=west] at (0,\y)
+      {\textbf{\year} --- \event};
+  }
+
+  % Future
+  \fill[k8sorange] (0,-14) circle (3pt);
+  \node[right=0.5cm, font=\small, text=k8sorange, anchor=west] at (0,-14)
+    {\textbf{Future} --- Wasm \& eBPF --- Next-gen efficiency};
+\end{tikzpicture}

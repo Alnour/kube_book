@@ -1,0 +1,41 @@
+% Figure 2.1: Monolithic kernel vs. microkernel
+\begin{tikzpicture}[node distance=0.3cm]
+  % --- Monolithic ---
+  \node[mnode, fill=lightgray, text=darkblue, minimum width=5cm] (mk_app) {User Applications};
+  \node[mnode, fill=k8sred, minimum width=5cm, below=0.5cm of mk_app] (mk_sched) {Scheduler};
+  \node[mnode, fill=k8sred, minimum width=5cm, below=of mk_sched] (mk_mem) {Memory Management};
+  \node[mnode, fill=k8sred, minimum width=5cm, below=of mk_mem] (mk_fs) {File System};
+  \node[mnode, fill=k8sred, minimum width=5cm, below=of mk_fs] (mk_net) {Networking};
+  \node[mnode, fill=k8sred, minimum width=5cm, below=of mk_net] (mk_drv) {Device Drivers};
+  \begin{scope}[on background layer]
+    \node[fit=(mk_sched)(mk_drv), subgraph={Kernel Space (privileged)}, fill=k8sred!8] {};
+  \end{scope}
+  \node[mnode, fill=k8sgray, minimum width=5cm, below=0.8cm of mk_drv] (mk_hw) {Hardware};
+  \draw[arr] (mk_app) -- (mk_sched);
+  \draw[arr] (mk_drv) -- (mk_hw);
+  \node[above=0.3cm of mk_app, font=\small\bfseries] {Monolithic Kernel};
+
+  % --- Microkernel ---
+  \node[mnode, fill=oceanblue, minimum width=1.8cm, font=\scriptsize, right=3cm of mk_app] (mu_app) {Applications};
+  \node[mnode, fill=oceanblue, minimum width=1.8cm, font=\scriptsize, right=0.3cm of mu_app] (mu_fs) {FS Server};
+  \node[mnode, fill=oceanblue, minimum width=1.8cm, font=\scriptsize, right=0.3cm of mu_fs] (mu_net) {Net Server};
+  \node[mnode, fill=oceanblue, minimum width=1.8cm, font=\scriptsize, right=0.3cm of mu_net] (mu_drv) {Driver};
+  \begin{scope}[on background layer]
+    \node[fit=(mu_app)(mu_drv), subgraph={User Space}, fill=oceanblue!8] (mu_us) {};
+  \end{scope}
+
+  \node[mnode, fill=k8sgreen, minimum width=2cm, font=\scriptsize, below=1cm of $(mu_fs.south)!0.5!(mu_net.south)$, xshift=-1.2cm] (mu_ipc) {IPC};
+  \node[mnode, fill=k8sgreen, minimum width=2cm, font=\scriptsize, right=0.3cm of mu_ipc] (mu_mem) {Memory};
+  \node[mnode, fill=k8sgreen, minimum width=2cm, font=\scriptsize, right=0.3cm of mu_mem] (mu_sc) {Scheduling};
+  \begin{scope}[on background layer]
+    \node[fit=(mu_ipc)(mu_sc), subgraph={Microkernel (minimal)}, fill=k8sgreen!8] (mu_kern) {};
+  \end{scope}
+
+  \node[mnode, fill=k8sgray, minimum width=7.8cm, below=0.8cm of mu_kern] (mu_hw) {Hardware};
+
+  \draw[arr, <->] (mu_app) -- (mu_fs) node[midway, above, font=\tiny] {IPC};
+  \draw[arr, <->] (mu_app) -- (mu_net) node[midway, above, font=\tiny] {};
+  \draw[arr] (mu_us) -- (mu_kern);
+  \draw[arr] (mu_kern) -- (mu_hw);
+  \node[above=0.3cm of $(mu_app.north)!0.5!(mu_drv.north)$, font=\small\bfseries] {Microkernel};
+\end{tikzpicture}
