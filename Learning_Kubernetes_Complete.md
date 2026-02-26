@@ -12,7 +12,7 @@ Have you ever wondered how giant websites like Google, Netflix, or Amazon run mi
 
 If you think of a data center full of computers (we call them **servers**) as a giant orchestra, Kubernetes is the conductor. It doesn't play an instrument itself, but it makes sure every musician (every application) knows when to play, how loudly, and what to do if they mess up. It makes the whole system work in harmony.
 
-But Kubernetes didn't just appear out of nowhere. It's the result of nearly 50 years of amazing ideas in computer science. To truly understand Kubernetes, we need to take a short trip back in time and see how these ideas grew and came together. This book will be your simple guide on that journey.
+But Kubernetes didn't just appear out of nowhere. It is the result of nearly 50 years of remarkable ideas in computer science. This book traces that architectural and historical journey — from the foundational principles of the 1960s through the virtualization revolution of the 2000s, all the way to the extensible platform that Kubernetes has become today.
 
 ```mermaid
 %%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
