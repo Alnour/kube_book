@@ -54,9 +54,23 @@ To truly understand Kubernetes, we can't just start with the technology of today
 
 ### 1. The Idea of Layers: Building Reliable Software Like a Cake
 
-In the early days of computing, writing software was chaotic. Programmers wrote what was often called **"spaghetti code"**—a giant, tangled mess where any part of the program could affect any other part. Debugging this was a nightmare. A small bug could send you on a wild goose chase through thousands of lines of unrelated code. It was clear that a more disciplined approach was needed to build complex, reliable systems.
+To understand what motivated Dijkstra, you need to picture what computing looked like in the late 1950s and early 1960s. Computers were the size of rooms — literally. The IBM 704 occupied an entire air-conditioned floor and cost millions of dollars. Only governments, militaries, and the largest corporations could afford them.
 
-In 1968, a brilliant Dutch computer scientist named **Edsger W. Dijkstra** introduced the solution: **layered architecture**.
+Programming these machines was a raw, almost physical act. You didn't type code — you punched holes in cards. A program was a deck of paper cards, each representing one instruction. Drop the deck, and you might spend hours re-sorting thousands of cards to restore your program. Make a mistake, and you sat in line — sometimes overnight — waiting for your batch to be fed through the machine, only to get back a printout showing you had a typo on line 47.
+
+And yet, armies of programmers were writing increasingly ambitious software on these machines. The most complex project of the era was **SAGE** (Semi-Automatic Ground Environment), the U.S. Air Force's system for tracking Soviet bombers. By the time it was finished, SAGE contained over **500,000 lines of code** — an almost incomprehensible number for the time — and required 700 programmers, making it the largest software project in history up to that point.
+
+The code was a mess. Programmers routinely used a technique called **`GOTO`** — a command that could jump execution to any arbitrary line in the program. Need to handle an error? `GOTO` line 1,847. Need a loop? `GOTO` line 302. Over time, a program's logic became impossible to follow. This was what critics called **"spaghetti code"**: pull one strand and the whole plate moves. A small bug could send you on a wild goose chase through thousands of lines of unrelated code, because *everything was connected to everything else*, and no one could draw a map of it.
+
+The crisis came to a head in 1968. NATO — the Western military alliance — was so alarmed by the state of the software industry that it organized an emergency conference in Garmisch, Germany, specifically to address what they named the **"Software Crisis."** Fifty of the world's top computer scientists gathered and reached a stark conclusion: the way software was being built was fundamentally broken. Projects routinely ran over budget, over schedule, and delivered products riddled with errors. The conference produced a report calling for software engineering to become a true *engineering discipline* — something with structure, rigor, and mathematical foundations — not the improvised craft it had become.
+
+One of the people who had been sounding this alarm longest and loudest was **Edsger W. Dijkstra**, a Dutch mathematician and computer scientist with a precise, almost surgical mind. He believed that if you couldn't *prove* a program was correct through pure logical reasoning, you didn't truly understand it. He found the `GOTO` style of programming philosophically unacceptable: how can you reason about a program whose execution can teleport to any line at any moment?
+
+That same year, Dijkstra published a short, devastating letter in the *Communications of the ACM* titled **"Go To Statement Considered Harmful."** It was one of the most influential — and controversial — documents in computing history: a polite but completely uncompromising argument that `GOTO` was the root of all software's structural problems and should be abolished. The programming community erupted in debate. Some agreed. Many were furious. His response? He kept building.
+
+Working on a system called the **"THE Multiprogramming System"** (named after his university, *Technische Hogeschool Eindhoven*), Dijkstra and his team built the alternative: **layered architecture**.
+
+In 1968, **Edsger W. Dijkstra** introduced the solution: **layered architecture**.
 
 His idea was simple but profound: structure the operating system like a layer cake. Each layer has a specific job, and it can only communicate with the layer directly beneath it.
 
