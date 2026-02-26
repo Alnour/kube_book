@@ -6,6 +6,27 @@
 - To Tony Choe, who taught me how to utilize OKE to build massive architectures.
 - To the Oracle Fusion Observability group, and especially the operations team led by Rob Mize, who gave me important practical lessons that helped me understand Kubernetes.
 
+---
+
+
+## A Note on AI Collaboration
+
+This book was written in partnership with artificial intelligence as a **cognitive thinking partner**.
+
+The ideas, architecture, and direction in these pages originate from the authors — from years of hands-on experience with real Kubernetes clusters, distributed systems, and the challenges of production infrastructure. But the process of developing those ideas — exploring historical connections, stress-testing arguments, drafting and refining explanations, and ensuring that complex concepts are accessible to readers without prior background — was done in active dialogue with AI systems.
+
+Specifically, we worked with:
+
+- **Claude** (Anthropic) — used extensively for structural reasoning, historical research, and refining long-form prose
+- **ChatGPT** (OpenAI) — used for ideation, alternative framings, and cross-checking technical accuracy
+- **Gemini** (Google DeepMind) — used for synthesis and exploring connections across the Kubernetes ecosystem
+
+We think of this process the way a human author might think of working with a brilliant research assistant and editor: the assistant doesn't write the book, but they make the author sharper. AI did not replace judgment, experience, or expertise — it amplified them.
+
+We believe this kind of human-AI collaboration is itself one of the most important architectural patterns of our time. It felt fitting to practice it while writing a book about systems architecture.
+
+---
+
 ## Introduction: What is Kubernetes and Why Does It Exist?
 
 Have you ever wondered how giant websites like Google, Netflix, or Amazon run millions of applications at the same time without breaking a sweat? The secret, in many cases, is a powerful tool called **Kubernetes**.
