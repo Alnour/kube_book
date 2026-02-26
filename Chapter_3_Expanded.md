@@ -8,14 +8,10 @@ The microkernel debate of the 1990s gave us the philosophical blueprint for micr
 
 Imagine owning a 50-passenger bus but only ever using it to drive yourself to work. This was the situation in most data centers in the early 2000s. Companies would buy a powerful server to run a single application, like a database or a web server. Even at peak times, the application might only use 10-15% of the server's CPU power. The rest of that expensive hardware sat idle, wasting electricity and taking up space.
 
-```mermaid
-%%{init: {'xyChart': {'width': 500, 'height': 300}}}%%
-xychart-beta
-    title "Typical Server Utilization (Early 2000s)"
-    x-axis ["Used Capacity", "Idle / Wasted"]
-    y-axis "Percentage of Server Resources" 0 --> 100
-    bar [12, 88]
-```
+| Resource | Utilization |
+|---|---|
+| Used Capacity | ~12% |
+| Idle / Wasted | ~88% |
 
 **Figure 3.1:** The server utilization problem. Most data center servers in the early 2000s used only 10–15% of their capacity, leaving the vast majority of expensive hardware idle.
 

@@ -1,4 +1,4 @@
-# Learning Kubernetes: A Simple Journey From The Beginning
+# The Architecture of Kubernetes: A Historical Journey into Cloud-Native Systems
 # Summary of A book to be extended
 
 - Authors: Alnour Alharin, Nevena Golubovic
@@ -13,7 +13,7 @@ Have you ever wondered how giant websites like Google, Netflix, or Amazon run mi
 
 If you think of a data center full of computers (we call them **servers**) as a giant orchestra, Kubernetes is the conductor. It doesn't play an instrument itself, but it makes sure every musician (every application) knows when to play, how loudly, and what to do if they mess up. It makes the whole system work in harmony.
 
-But Kubernetes didn't just appear out of nowhere. It's the result of nearly 50 years of amazing ideas in computer science. To truly understand Kubernetes, we need to take a short trip back in time and see how these ideas grew and came together. This book will be your simple guide on that journey.
+But Kubernetes didn't just appear out of nowhere. It's the result of nearly 50 years of amazing ideas in computer science. This book traces that architectural and historical journey — from the foundational OS concepts of the 1960s through the cloud revolution, to Kubernetes and its extensible future.
 
 ```mermaid
 %%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
@@ -37,7 +37,7 @@ graph TB
     style Conc fill:#e67e22,color:#fff
 ```
 
-**Figure S.1:** Book roadmap. Each chapter builds on the previous, tracing 50 years of computing ideas — from foundational OS concepts through the cloud revolution to Kubernetes and its extensible future.
+**Figure S.1:** Book roadmap. Each chapter builds on the previous, tracing 50 years of computing ideas — from foundational OS concepts through the cloud revolution to Kubernetes and its extensible future. This book is an *architectural and historical* exploration of cloud-native systems.
 
 ---
 

@@ -13,14 +13,12 @@ In 2008, Google engineer Jeff Dean gave a presentation that pulled back the curt
 *   **Rack Failures:** About **20 times a year**, an entire rack of 40-80 machines would vanish from the network instantly due to a failure in its top-level switch or power supply.
 *   **Power Distribution Failures:** At least **once a year**, a major power distribution unit would fail, taking **500 to 1,000 machines** offline simultaneously.
 
-```mermaid
-%%{init: {'xyChart': {'width': 500, 'height': 300}}}%%
-xychart-beta
-    title "Annual Failures per ~1,800-Server Cluster (Jeff Dean, 2008)"
-    x-axis ["Machine Failures", "Disk Failures", "Rack Failures", "Power Failures"]
-    y-axis "Number of Failures" 0 --> 5000
-    bar [1000, 4000, 20, 1]
-```
+| Failure Type | Annual Count (per ~1,800 servers) |
+|---|---|
+| Machine Failures | ~1,000 |
+| Disk Failures | ~4,000 |
+| Rack-level Failures | ~20 |
+| Power Distribution Failures | ~1 (affecting 500–1,000 machines) |
 
 **Figure 4.1:** Jeff Dean's failure statistics for a typical Google cluster. Hardware failure is not an exception — it is the constant, nominal state at scale. (Note: a single power failure can affect 500–1,000 machines simultaneously.)
 

@@ -1,4 +1,4 @@
-# Learning Kubernetes: A Simple Journey From The Beginning
+# The Architecture of Kubernetes: A Historical Journey into Cloud-Native Systems
 
 - Authors: Alnour Alharin, Nevena Golubovic
 
@@ -36,7 +36,7 @@ graph TB
     style Conc fill:#e67e22,color:#fff
 ```
 
-**Figure S.1:** Book roadmap. Each chapter builds on the previous, tracing 50 years of computing ideas — from foundational OS concepts through the cloud revolution to Kubernetes and its extensible future.
+**Figure S.1:** Book roadmap. Each chapter builds on the previous, tracing 50 years of computing ideas — from foundational OS concepts through the cloud revolution to Kubernetes and its extensible future. This book is an *architectural and historical* exploration of cloud-native systems.
 
 ---
 
@@ -477,14 +477,10 @@ The microkernel debate of the 1990s gave us the philosophical blueprint for micr
 
 Imagine owning a 50-passenger bus but only ever using it to drive yourself to work. This was the situation in most data centers in the early 2000s. Companies would buy a powerful server to run a single application, like a database or a web server. Even at peak times, the application might only use 10-15% of the server's CPU power. The rest of that expensive hardware sat idle, wasting electricity and taking up space.
 
-```mermaid
-%%{init: {'xyChart': {'width': 500, 'height': 300}}}%%
-xychart-beta
-    title "Typical Server Utilization (Early 2000s)"
-    x-axis ["Used Capacity", "Idle / Wasted"]
-    y-axis "Percentage of Server Resources" 0 --> 100
-    bar [12, 88]
-```
+| Resource | Utilization |
+|---|---|
+| Used Capacity | ~12% |
+| Idle / Wasted | ~88% |
 
 **Figure 3.1:** The server utilization problem. Most data center servers in the early 2000s used only 10–15% of their capacity, leaving the vast majority of expensive hardware idle.
 
@@ -628,14 +624,12 @@ In 2008, Google engineer Jeff Dean gave a presentation that pulled back the curt
 *   **Rack Failures:** About **20 times a year**, an entire rack of 40-80 machines would vanish from the network instantly due to a failure in its top-level switch or power supply.
 *   **Power Distribution Failures:** At least **once a year**, a major power distribution unit would fail, taking **500 to 1,000 machines** offline simultaneously.
 
-```mermaid
-%%{init: {'xyChart': {'width': 500, 'height': 300}}}%%
-xychart-beta
-    title "Annual Failures per ~1,800-Server Cluster (Jeff Dean, 2008)"
-    x-axis ["Machine Failures", "Disk Failures", "Rack Failures", "Power Failures"]
-    y-axis "Number of Failures" 0 --> 5000
-    bar [1000, 4000, 20, 1]
-```
+| Failure Type | Annual Count (per ~1,800 servers) |
+|---|---|
+| Machine Failures | ~1,000 |
+| Disk Failures | ~4,000 |
+| Rack-level Failures | ~20 |
+| Power Distribution Failures | ~1 (affecting 500–1,000 machines) |
 
 **Figure 4.1:** Jeff Dean's failure statistics for a typical Google cluster. Hardware failure is not an exception — it is the constant, nominal state at scale. (Note: a single power failure can affect 500–1,000 machines simultaneously.)
 
@@ -936,7 +930,9 @@ sequenceDiagram
 
 If a network partition occurs and a quorum cannot be formed, the etcd cluster will temporarily refuse to accept any new writes. It would rather become briefly unavailable than risk accepting conflicting information that would corrupt the state of the cluster.
 
-Finally, etcd provides a crucial **watch** feature. The Kubernetes controllers don't waste time constantly asking etcd, "Anything new? Anything new?" Instead, they place a "watch" on the parts of the database they care about. The moment a value changes (e.g., a user updates a desired state), etcd proactively notifies the relevant controller. ```mermaid
+Finally, etcd provides a crucial **watch** feature. The Kubernetes controllers don't waste time constantly asking etcd, "Anything new? Anything new?" Instead, they place a "watch" on the parts of the database they care about. The moment a value changes (e.g., a user updates a desired state), etcd proactively notifies the relevant controller.
+
+```mermaid
 %%{init: {'sequence': {'actorMargin': 40, 'width': 150, 'height': 40, 'boxMargin': 8, 'noteMargin': 8, 'messageMargin': 30}}}%%
 sequenceDiagram
     participant User
@@ -958,11 +954,75 @@ sequenceDiagram
 This notification is the "tap on the shoulder" that kicks off the controller's reconciliation loop, making the entire system incredibly efficient and reactive.
 
 ---
+
+### 3. The Worker Node: The Cluster's Muscle
+
+Chapters 4 and 5 have done a thorough job explaining the "Brain" of the cluster — the Control Plane (API Server, Scheduler, Controller Manager, and etcd). But a conductor needs an orchestra. The Control Plane's decisions must be *executed* somewhere. This is the job of the **Worker Nodes** — the "Muscle" of the cluster.
+
+A Worker Node is simply a server (physical or virtual) where application Pods are actually run. Every Worker Node has two essential agents installed on it: the **Kubelet** and the **Kube-proxy**.
+
+#### **The Kubelet: The Node's Local Agent**
+
+The Kubelet is the most important component on a Worker Node. It is the direct representative of the Control Plane on each machine — the node's "foreman."
+
+Its job is simple but critical: it continuously watches the API Server for any Pod that has been **scheduled** to run on its node. Once it receives an instruction, the Kubelet translates it into action:
+
+1. It calls the **Container Runtime Interface (CRI)** — the very same pluggable layer we discussed in Chapter 1 — instructing it to pull the container image and start the container.
+2. It monitors the health of every running container, reporting their status back to the API Server (updating the "observed state" in etcd).
+3. If a container crashes, the Kubelet detects this immediately and reports the discrepancy, giving the Controller Manager (from the Control Plane) the signal it needs to trigger a reconciliation loop.
+
+Without the Kubelet, the Control Plane's declarations would be nothing but text in a database. The Kubelet is what brings them to life on real hardware.
+
+#### **Kube-proxy: The Network Rules Agent**
+
+The Kube-proxy is the second agent running on every Worker Node. Its role is to manage the **networking rules** that allow Pods to communicate with each other and with the outside world.
+
+When you create a Kubernetes `Service` (a stable virtual IP address that sits in front of a group of Pods), kube-proxy is responsible for updating the network rules on its node so that traffic destined for that virtual IP is correctly forwarded to one of the healthy backing Pods — even as individual Pods are created and destroyed.
+
+```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 10, 'rankSpacing': 25, 'padding': 20, 'subGraphTitleMargin': {'top': 10, 'bottom': 5}}}}%%
+graph TB
+    subgraph ControlPlane["Control Plane ('The Brain')"]
+        API["API Server"]
+        Sched["Scheduler"]
+        CM["Controller Manager"]
+        ETCD[("etcd")]
+        API <--> Sched
+        API <--> CM
+        API <--> ETCD
+    end
+
+    subgraph WorkerNode["Worker Node ('The Muscle')"]
+        Kubelet["Kubelet\n(Node Agent)"]
+        KubeProxy["Kube-proxy\n(Network Rules)"]
+        CRI["Container Runtime\n(via CRI)"]
+        Pod1["Pod A"]
+        Pod2["Pod B"]
+        Kubelet --> CRI
+        CRI --> Pod1 & Pod2
+        KubeProxy --> Pod1 & Pod2
+    end
+
+    API <-->|"schedules & monitors"| Kubelet
+    API <-->|"updates network rules"| KubeProxy
+
+    style ControlPlane fill:#2c3e50,color:#ecf0f1
+    style WorkerNode fill:#2980b9,color:#fff
+    style Kubelet fill:#27ae60,color:#fff
+    style KubeProxy fill:#8e44ad,color:#fff
+```
+
+**Figure 5.7:** Control Plane and Worker Node anatomy. The Control Plane (API Server, Scheduler, Controller Manager, etcd) makes decisions. The Worker Node executes them: the Kubelet runs Pods via the CRI, and Kube-proxy enforces network routing rules.
+
+Together, the Control Plane and the Worker Nodes form a complete cluster. The Control Plane watches the world and issues instructions; the Worker Nodes receive those instructions through their agents and make them real. The self-healing magic of the control loop only works because the Kubelet faithfully reports what is *actually* happening on each machine, giving the controllers the real-time "observed state" they need to do their job.
+
+---
 ## References
 
 *   [How etcd works with and without Kubernetes](https://learnkube.com/etcd-kubernetes)
 *   [Consistency Models: Strong vs Eventual in Kubernetes](https://hokstadconsulting.com/blog/consistency-models-strong-vs-eventual-in-kubernetes)
 *   Brewer, E. (2000). Towards Robust Distributed Systems. *Proceedings of the Nineteenth Annual ACM Symposium on Principles of Distributed Computing*, 7.
+*   [Kubernetes Components — Kubernetes Documentation](https://kubernetes.io/docs/concepts/overview/components/)
 
 ---
 
