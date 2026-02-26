@@ -492,7 +492,7 @@ def generate_preamble():
 \tikzset{
   mnode/.style={
     rectangle, rounded corners=4pt, minimum width=2.2cm,
-    minimum height=0.9cm, text centered, font=\small,
+    minimum height=0.9cm, align=center, font=\small,
     draw=none, text=white, inner sep=4pt,
   },
   darkblue node/.style={mnode, fill=darkblue},

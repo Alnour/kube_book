@@ -1,0 +1,43 @@
+\contentsline {chapter}{\numberline {1}Introduction: What is Kubernetes and Why Does It Exist?}{1}{chapter.1}%
+\contentsline {chapter}{\numberline {2}The Building Blocks of a Modern System}{2}{chapter.2}%
+\contentsline {subsection}{\numberline {2.0.1}1. The Idea of Layers: Building Reliable Software Like a Cake}{2}{subsection.2.0.1}%
+\contentsline {subsubsection}{\textbf {How Kubernetes Uses Layers}}{3}{figure.2.1}%
+\contentsline {subsection}{\numberline {2.0.2}2. The Idea of the Process: Giving Programs Their Own Worlds}{4}{subsection.2.0.2}%
+\contentsline {subsection}{\numberline {2.0.3}3. The Idea of Virtualization: Defining the "Pretend Computer"}{4}{subsection.2.0.3}%
+\contentsline {subsubsection}{\textbf {Containers vs. Virtual Machines}}{5}{Item.5}%
+\contentsline {chapter}{\numberline {3}The "Micro" Revolution}{7}{chapter.3}%
+\contentsline {subsection}{\numberline {3.0.1}1. The Problem with Monoliths}{7}{subsection.3.0.1}%
+\contentsline {subsection}{\numberline {3.0.2}2. The Microkernel Philosophy: Less is More}{7}{subsection.3.0.2}%
+\contentsline {subsection}{\numberline {3.0.3}3. From Microkernels to Microservices: A Familiar Story}{8}{subsection.3.0.3}%
+\contentsline {subsection}{\numberline {3.0.4}4. Kubernetes: The Distributed Microkernel for the Cloud}{9}{subsection.3.0.4}%
+\contentsline {chapter}{\numberline {4}The Virtual Machine Takes Over}{11}{chapter.4}%
+\contentsline {subsection}{\numberline {4.0.1}1. The Problem of the Empty Server}{11}{subsection.4.0.1}%
+\contentsline {subsection}{\numberline {4.0.2}2. Xen and the Art of Cooperation (Paravirtualization)}{11}{subsection.4.0.2}%
+\contentsline {subsection}{\numberline {4.0.3}3. KVM and the Genius of Integration (Hardware Virtualization)}{12}{subsection.4.0.3}%
+\contentsline {subsection}{\numberline {4.0.4}4. Why This Matters for Kubernetes}{13}{subsection.4.0.4}%
+\contentsline {chapter}{\numberline {5}The Hard Truth About Hardware}{14}{chapter.5}%
+\contentsline {subsection}{\numberline {5.0.1}1. "Failure is Not an Anomaly; It is the Nominal State"}{14}{subsection.5.0.1}%
+\contentsline {subsection}{\numberline {5.0.2}2. Learning to Herd the Cattle: Borg and Omega}{15}{subsection.5.0.2}%
+\contentsline {subsubsection}{\textbf {Borg: The All-Powerful Monolith}}{15}{subsection.5.0.2}%
+\contentsline {subsubsection}{\textbf {Omega: A Smarter, Shared-State Architecture}}{15}{subsection.5.0.2}%
+\contentsline {subsubsection}{\textbf {The Kubernetes Synthesis: The Best of All Worlds}}{16}{subsection.5.0.2}%
+\contentsline {chapter}{\numberline {6}The Conductor Takes the Stage}{17}{chapter.6}%
+\contentsline {subsection}{\numberline {6.0.1}1. The Genius of the Control Loop}{17}{subsection.6.0.1}%
+\contentsline {subsubsection}{\textbf {The Old Way: Edge-Triggered (Imperative)}}{17}{figure.6.1}%
+\contentsline {subsubsection}{\textbf {The Kubernetes Way: Level-Triggered (Declarative)}}{18}{figure.6.1}%
+\contentsline {subsection}{\numberline {6.0.2}2. Etcd: The Cluster's Single Source of Truth}{19}{subsection.6.0.2}%
+\contentsline {subsubsection}{\textbf {The CAP Theorem and Why Consistency Matters}}{19}{subsection.6.0.2}%
+\contentsline {chapter}{\numberline {7}Teaching Kubernetes New Tricks --- Operators and the Extensible Platform}{22}{chapter.7}%
+\contentsline {subsection}{\numberline {7.0.1}1. The Problem: Domain Knowledge That Kubernetes Doesn't Have}{22}{subsection.7.0.1}%
+\contentsline {subsection}{\numberline {7.0.2}2. Custom Resource Definitions (CRDs): Teaching Kubernetes New Words}{23}{subsection.7.0.2}%
+\contentsline {subsection}{\numberline {7.0.3}3. The Operator Pattern: Encoding Human Knowledge Into Software}{23}{subsection.7.0.3}%
+\contentsline {subsection}{\numberline {7.0.4}4. The Ecosystem: A Platform for Building Platforms}{25}{subsection.7.0.4}%
+\contentsline {subsection}{\numberline {7.0.5}5. Admission Webhooks: The Gatekeepers}{26}{subsection.7.0.5}%
+\contentsline {subsection}{\numberline {7.0.6}6. Helm: Packaging and Sharing the Knowledge}{26}{subsection.7.0.6}%
+\contentsline {subsection}{\numberline {7.0.7}The Full Picture}{27}{subsection.7.0.7}%
+\contentsline {chapter}{\numberline {8}Conclusion and Future Trajectories}{29}{chapter.8}%
+\contentsline {subsection}{\numberline {8.0.1}1. A 50-Year Journey to a Distributed Operating System}{29}{subsection.8.0.1}%
+\contentsline {subsection}{\numberline {8.0.2}2. The Cycle Continues: What's Next?}{31}{subsection.8.0.2}%
+\contentsline {subsubsection}{\textbf {Wasm (WebAssembly): A New Kind of Sandbox}}{31}{subsection.8.0.2}%
+\contentsline {subsubsection}{\textbf {eBPF: Making the Kernel Programmable}}{31}{subsection.8.0.2}%
+\contentsline {subsection}{\numberline {8.0.3}The Enduring Abstraction}{32}{subsection.8.0.3}%
