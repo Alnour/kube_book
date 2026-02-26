@@ -21,18 +21,24 @@ graph TB
     Ch2["<b>Ch 2</b><br/>Micro Revolution<br/><i>Microkernels,<br/>Microservices</i>"]
     Ch3["<b>Ch 3</b><br/>VM Takes Over<br/><i>Xen, KVM,<br/>Cloud</i>"]
     Ch4["<b>Ch 4</b><br/>Hardware Truth<br/><i>Failure at Scale,<br/>Borg, Omega</i>"]
-    Ch5["<b>Ch 5</b><br/>The Conductor<br/><i>Control Loop,<br/>etcd, CAP</i>"]
-    Ch6["<b>Ch 6</b><br/>Extensibility<br/><i>CRDs, Operators,<br/>Helm</i>"]
+    Ch5["<b>Ch 5</b><br/>Cluster Architecture<br/><i>Control Plane,<br/>Worker Nodes</i>"]
+    Ch6["<b>Ch 6</b><br/>Getting Hands-On<br/><i>Minikube, kubectl,<br/>First Pod</i>"]
+    Ch7["<b>Ch 7</b><br/>The Conductor<br/><i>Control Loop,<br/>etcd, CAP</i>"]
+    Ch8["<b>Ch 8</b><br/>Deploy & Connect<br/><i>Deployments,<br/>Services, Ingress</i>"]
+    Ch9["<b>Ch 9</b><br/>Extensibility<br/><i>CRDs, Operators,<br/>Helm</i>"]
     Conc["<b>Conclusion</b><br/><i>Wasm, eBPF,<br/>Future</i>"]
 
-    Ch1 --> Ch2 --> Ch3 --> Ch4 --> Ch5 --> Ch6 --> Conc
+    Ch1 --> Ch2 --> Ch3 --> Ch4 --> Ch5 --> Ch6 --> Ch7 --> Ch8 --> Ch9 --> Conc
 
     style Ch1 fill:#2c3e50,color:#ecf0f1
     style Ch2 fill:#34495e,color:#ecf0f1
     style Ch3 fill:#2980b9,color:#fff
     style Ch4 fill:#e74c3c,color:#fff
-    style Ch5 fill:#27ae60,color:#fff
-    style Ch6 fill:#8e44ad,color:#fff
+    style Ch5 fill:#16a085,color:#fff
+    style Ch6 fill:#d35400,color:#fff
+    style Ch7 fill:#27ae60,color:#fff
+    style Ch8 fill:#c0392b,color:#fff
+    style Ch9 fill:#8e44ad,color:#fff
     style Conc fill:#e67e22,color:#fff
 ```
 
@@ -750,7 +756,261 @@ This API-centric design is Kubernetes's superpower. It provides a single point f
 
 ---
 
-# Chapter 5: The Conductor Takes the Stage
+# Chapter 5: The Cluster Architecture — Brain and Muscle
+
+In the previous four chapters, we traced the intellectual lineage of Kubernetes: the layered discipline of Dijkstra, the isolation of Unix processes, the virtualization breakthroughs of Xen and KVM, and the hard-won lessons from Google's massive data centers. We now have all the context we need to understand *why* Kubernetes was built the way it was.
+
+In this chapter, we put it all together and meet the machine itself. We are going to look at the **anatomy of a Kubernetes cluster** — which components exist, what each one does, and how they cooperate to keep your applications alive, even when the underlying hardware is falling apart around them.
+
+---
+
+> **In Plain English: What is a "Cluster"?**
+> The word "cluster" just means "a group of computers that are managed together as a single unit." When you use Kubernetes, you don't think about individual machines — you think about the cluster as one big, powerful computer that you can give instructions to. Kubernetes handles the details of which physical machine actually does the work.
+
+---
+
+### 1. The Two Roles: Brain and Muscle
+
+Every Kubernetes cluster is divided into two distinct types of machines, each playing a completely different role.
+
+**The Brain — The Control Plane**
+
+This is the cluster's headquarters. The Control Plane doesn't actually run your applications. Instead, it watches over the entire cluster, makes all the important decisions, and continuously works to make sure the cluster's real state matches the state you declared you wanted.
+
+**The Muscle — Worker Nodes**
+
+These are the machines that actually do the work. Worker Nodes receive instructions from the Control Plane and execute them: pulling container images, starting containers, reporting back on their health. They are the "hands" of the operation.
+
+```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 15, 'rankSpacing': 35, 'padding': 20}}}%%
+graph TB
+    subgraph Brain["🧠 The Brain — Control Plane"]
+        API["API Server\n(The Front Door)"]
+        ETCD[("etcd\n(The Memory)")]
+        Sched["Scheduler\n(The Matchmaker)"]
+        CM["Controller Manager\n(The Guardian)"]
+        API <--> ETCD
+        API <--> Sched
+        API <--> CM
+    end
+
+    subgraph Muscle["💪 The Muscle — Worker Nodes"]
+        subgraph Node1["Worker Node 1"]
+            Kube1["Kubelet"]
+            KP1["Kube-proxy"]
+            Pods1["Your Pods"]
+            Kube1 --> Pods1
+        end
+        subgraph Node2["Worker Node 2"]
+            Kube2["Kubelet"]
+            KP2["Kube-proxy"]
+            Pods2["Your Pods"]
+            Kube2 --> Pods2
+        end
+    end
+
+    API <-->|"instructions &\nstatus reports"| Kube1
+    API <-->|"instructions &\nstatus reports"| Kube2
+    API --> KP1
+    API --> KP2
+
+    style Brain fill:#2c3e50,color:#ecf0f1
+    style Muscle fill:#1a5276,color:#ecf0f1
+    style Node1 fill:#2980b9,color:#fff
+    style Node2 fill:#2980b9,color:#fff
+```
+
+**Figure 5.1:** The Brain and Muscle of a Kubernetes cluster. The Control Plane makes all decisions. Worker Nodes carry them out. They communicate constantly through the API Server.
+
+### 2. Inside the Brain: The Control Plane Components
+
+#### **The API Server — The Front Door**
+
+> **In Plain English:** Every guest, every department, every delivery in the cluster must go through one single, professional front desk. That is the API Server.
+
+The **API Server** is the only entry point for all communication with the cluster — your `kubectl` commands, node health updates, and scheduler decisions all flow through it. This centralization enables consistent authentication, validation, and audit logging.
+
+#### **etcd — The Cluster's Long-Term Memory**
+
+> **In Plain English:** etcd is the hotel's master ledger — the single book containing the definitive record of every reservation and room assignment. It is the ground truth. *Only the API Server may write to it.*
+
+**etcd** stores the entire desired and observed state of the cluster: what applications you want, how many replicas, which nodes exist, all configuration data.
+
+#### **The Scheduler — The Matchmaker**
+
+> **In Plain English:** You have a new employee (a new container). You have several offices (Worker Nodes) with varying amounts of free space. The **Scheduler** is HR — it reviews everyone's requirements and decides: "You go to Node 2."
+
+#### **The Controller Manager — The Guardian**
+
+> **In Plain English:** A controller is like a security guard making rounds — constantly checking that everything is as it should be. If it finds something wrong, it fixes it.
+
+The **Controller Manager** runs many individual controllers:
+- **ReplicaSet Controller:** Ensures the right number of Pod replicas are always running.
+- **Node Controller:** Monitors node health and reschedules Pods if a node fails.
+- **Deployment Controller:** Manages rolling updates with zero downtime.
+
+### 3. Inside the Muscle: Worker Node Components
+
+#### **The Kubelet — The Node's Foreman**
+
+The **Kubelet** runs on every Worker Node. It watches the API Server for Pod assignments, instructs the Container Runtime to start containers, monitors their health, and reports status back. Without the Kubelet, the Control Plane's declarations would be nothing but text in a database.
+
+#### **Kube-proxy — The Network Rules Agent**
+
+The **Kube-proxy** manages networking rules on each node, ensuring traffic destined for a Service's virtual IP is correctly load-balanced across the healthy Pods backing it.
+
+### 4. A Day in the Life of a Pod
+
+```mermaid
+%%{init: {'sequence': {'actorMargin': 30, 'width': 130, 'height': 35, 'messageMargin': 25}}}%%
+sequenceDiagram
+    participant You as 👤 You
+    participant API as API Server
+    participant etcd as etcd
+    participant Sched as Scheduler
+    participant CM as Controller Mgr
+    participant Kubelet as Kubelet (Node 2)
+    participant CRI as Container Runtime
+
+    You->>API: Apply desired state (kubectl apply)
+    API->>etcd: Store desired state
+    etcd-->>CM: Watch notification 🔔
+    CM->>API: Create Pod (Pending)
+    API->>etcd: Store Pod
+    etcd-->>Sched: Watch notification 🔔
+    Sched->>API: Assign Pod to Node 2
+    API->>etcd: Update Pod (node: Node 2)
+    etcd-->>Kubelet: Watch notification 🔔
+    Kubelet->>CRI: Pull image + start container
+    CRI-->>Kubelet: Running ✓
+    Kubelet->>API: Pod status: Running
+    API->>etcd: Update observed state
+```
+
+**Figure 5.2:** The complete lifecycle of a Pod. Six components cooperate through the API Server: you declare intent → Controller Manager creates the Pod object → Scheduler assigns it to a node → Kubelet brings it to life.
+
+---
+
+# Chapter 6: Getting Hands-On — Your First Kubernetes Cluster
+
+The previous five chapters have built a rich mental model of what Kubernetes is and why it works the way it does. Now it's time to get our hands dirty. In this chapter, we will set up a real, working Kubernetes cluster on your own computer and run your very first application.
+
+> **In Plain English: What is a terminal?**
+> A **terminal** is a text-based way to talk to your computer. On Mac: `Cmd + Space` → search "Terminal". On Windows: search "PowerShell". Lines starting with `$` are commands you type — don't type the `$` itself.
+
+### 1. The Tools We Need
+
+**Minikube** creates a mini, single-machine Kubernetes cluster on your computer — a complete Kubernetes cluster in a bottle.
+
+**kubectl** ("kyoob-control") is the command-line tool for talking to any Kubernetes cluster.
+
+### 2. Installing the Tools
+
+**Install kubectl:**
+```bash
+# macOS
+$ brew install kubectl
+
+# Windows
+$ choco install kubernetes-cli
+
+# Linux (Ubuntu/Debian)
+$ sudo apt-get update && sudo apt-get install -y kubectl
+```
+
+Verify: `$ kubectl version --client` → should print a version number. ✅
+
+**Install Minikube:**
+```bash
+# macOS
+$ brew install minikube
+
+# Windows
+$ choco install minikube
+
+# Linux
+$ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+$ sudo install minikube-linux-amd64 /usr/local/bin/minikube
+```
+
+> **Note:** Minikube needs Docker Desktop (free at [docker.com](https://www.docker.com/products/docker-desktop/)) to run.
+
+### 3. Starting Your First Cluster
+
+```bash
+$ minikube start
+```
+
+When you see `Done!`, verify with:
+```bash
+$ kubectl get nodes
+```
+```
+NAME       STATUS   ROLES           AGE   VERSION
+minikube   Ready    control-plane   45s   v1.28.3
+```
+`STATUS: Ready` means your cluster is healthy and waiting. ✅
+
+### 4. Your First Pod — The Kubernetes Way (Declarative YAML)
+
+Create `my-first-pod.yaml`:
+```yaml
+apiVersion: v1          # Which Kubernetes API version
+kind: Pod               # What type of object
+metadata:
+  name: my-nginx        # Name of this Pod
+  labels:
+    app: web            # A tag we can use to find this Pod later
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx        # The container image to run
+    ports:
+    - containerPort: 80 # Port the web server listens on
+```
+
+Apply it:
+```bash
+$ kubectl apply -f my-first-pod.yaml
+```
+```
+pod/my-nginx created
+```
+
+Check it's running:
+```bash
+$ kubectl get pods
+```
+```
+NAME       READY   STATUS    RESTARTS   AGE
+my-nginx   1/1     Running   0          12s
+```
+
+### 5. Inspecting Your Pod
+
+```bash
+$ kubectl describe pod my-nginx
+```
+
+The **Events** section at the bottom is your best debugging tool — it shows the full lifecycle: scheduled → image pulled → container started.
+
+Access your Pod from your browser:
+```bash
+$ kubectl port-forward pod/my-nginx 8080:80
+```
+Then open `http://localhost:8080` — you'll see the nginx welcome page. **You just ran a web server on Kubernetes!** 🎉
+
+### 6. Cleaning Up
+
+```bash
+$ kubectl delete pod my-nginx
+$ minikube stop        # Pause the cluster
+$ minikube delete      # Delete it entirely
+```
+
+---
+
+# Chapter 7: The Conductor Takes the Stage
 
 When Kubernetes was released in 2014, it stood on the shoulders of giants, incorporating 50 years of lessons from computer science history. But its own unique genius—the thing that makes Kubernetes *feel* like magic—lies in how it manages the cluster day-to-day. It's not just about starting containers; it's about creating a living, breathing, self-healing system. This magic is built on two core concepts: the **Control Loop** and the cluster's brain, **etcd**.
 
@@ -1026,9 +1286,158 @@ Together, the Control Plane and the Worker Nodes form a complete cluster. The Co
 
 ---
 
-# Chapter 6: Teaching Kubernetes New Tricks — Operators and the Extensible Platform
+# Chapter 8: Deploying and Connecting — Real-World Kubernetes
 
-In Chapter 5, we saw how Kubernetes uses the control loop to keep your applications running: you declare a desired state, and controllers work tirelessly to make reality match. In Chapter 4, we learned that the API Server is the single gateway through which every interaction with the cluster must pass. These are powerful ideas. But they raise a natural question: what happens when Kubernetes doesn't know *how* to manage something?
+In Chapter 6, we ran our first Pod. Bare Pods are great for learning, but in production, nobody runs them directly. This chapter introduces the four essential building blocks for deploying real applications:
+
+1. **Deployments** — run your application reliably with automatic self-healing
+2. **Services** — give your application a stable address
+3. **Ingress** — route web traffic from the internet
+4. **Storage** — persist data that survives container restarts
+
+> Start your cluster first: `$ minikube start`
+
+### 1. Deployments — Why Bare Pods Are Fragile
+
+A bare Pod has no guardian. If it crashes, it's gone forever. A **Deployment** wraps your Pod in the reconciliation loop from Chapter 7 and watches over it forever.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-app
+spec:
+  replicas: 3               # Always want 3 copies running
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"     # 100 millicores = 0.1 CPU core
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+```
+
+Apply and test self-healing:
+```bash
+$ kubectl apply -f my-deployment.yaml
+$ kubectl delete pod <any-pod-name>   # Kill one
+$ kubectl get pods                    # Watch the replacement appear
+```
+
+Rolling update with zero downtime:
+```bash
+$ kubectl set image deployment/my-web-app nginx=nginx:1.26
+$ kubectl rollout status deployment/my-web-app
+```
+
+Rollback if needed:
+```bash
+$ kubectl rollout undo deployment/my-web-app
+```
+
+### 2. Services — A Stable Address
+
+Pod IPs are temporary — every replaced Pod gets a new IP. A **Service** provides one stable virtual IP (ClusterIP) that load-balances across all backing Pods.
+
+| Type | Reachable By | Use Case |
+|---|---|---|
+| **ClusterIP** | Pods inside the cluster | Internal microservice communication |
+| **NodePort** | Anyone who can reach any node | Development / testing |
+| **LoadBalancer** | The public internet | Production, cloud deployments |
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-web-service
+spec:
+  selector:
+    app: web            # Routes traffic to Pods with this label
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: ClusterIP
+```
+
+### 3. Ingress — One Entry Point for All Traffic
+
+Instead of one LoadBalancer per application, **Ingress** routes all external traffic through a single entry point using hostname and path rules:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  rules:
+  - host: www.myapp.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: my-web-service
+            port:
+              number: 80
+```
+
+### 4. Storage — Persisting Data
+
+Containers are ephemeral — their filesystem is wiped on restart. **PersistentVolumes** and **PersistentVolumeClaims** connect containers to storage that lives outside and survives restarts.
+
+```yaml
+# Step 1: Claim storage (developer's job)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+---
+# Step 2: Use it in a Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-db-pod
+spec:
+  containers:
+  - name: my-db
+    image: postgres:16
+    volumeMounts:
+    - mountPath: /var/lib/postgresql/data
+      name: db-storage
+  volumes:
+  - name: db-storage
+    persistentVolumeClaim:
+      claimName: my-pvc
+```
+
+Data written to `/var/lib/postgresql/data` now survives Pod restarts. ✅
+
+---
+
+# Chapter 9: Teaching Kubernetes New Tricks — Operators and the Extensible Platform
+
+In Chapter 7, we saw how Kubernetes uses the control loop to keep your applications running: you declare a desired state, and controllers work tirelessly to make reality match. In Chapter 5, we learned about the Cluster Architecture and the API Server as the single gateway through which every interaction with the cluster must pass. These are powerful ideas. But they raise a natural question: what happens when Kubernetes doesn't know *how* to manage something?
 
 Kubernetes knows how to keep three copies of a web server running. But it doesn't know how to run a database. It doesn't know how to manage a message queue, provision a TLS certificate, or orchestrate a machine learning pipeline. These tasks require specialized, domain-specific knowledge that no general-purpose system could ship with out of the box.
 

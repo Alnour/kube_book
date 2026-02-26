@@ -22,18 +22,24 @@ graph TB
     Ch2["<b>Ch 2</b><br/>Micro Revolution<br/><i>Microkernels,<br/>Microservices</i>"]
     Ch3["<b>Ch 3</b><br/>VM Takes Over<br/><i>Xen, KVM,<br/>Cloud</i>"]
     Ch4["<b>Ch 4</b><br/>Hardware Truth<br/><i>Failure at Scale,<br/>Borg, Omega</i>"]
-    Ch5["<b>Ch 5</b><br/>The Conductor<br/><i>Control Loop,<br/>etcd, CAP</i>"]
-    Ch6["<b>Ch 6</b><br/>Extensibility<br/><i>CRDs, Operators,<br/>Helm</i>"]
+    Ch5["<b>Ch 5</b><br/>Cluster Architecture<br/><i>Control Plane,<br/>Worker Nodes</i>"]
+    Ch6["<b>Ch 6</b><br/>Getting Hands-On<br/><i>Minikube, kubectl,<br/>First Pod</i>"]
+    Ch7["<b>Ch 7</b><br/>The Conductor<br/><i>Control Loop,<br/>etcd, CAP</i>"]
+    Ch8["<b>Ch 8</b><br/>Deploy & Connect<br/><i>Deployments,<br/>Services, Ingress</i>"]
+    Ch9["<b>Ch 9</b><br/>Extensibility<br/><i>CRDs, Operators,<br/>Helm</i>"]
     Conc["<b>Conclusion</b><br/><i>Wasm, eBPF,<br/>Future</i>"]
 
-    Ch1 --> Ch2 --> Ch3 --> Ch4 --> Ch5 --> Ch6 --> Conc
+    Ch1 --> Ch2 --> Ch3 --> Ch4 --> Ch5 --> Ch6 --> Ch7 --> Ch8 --> Ch9 --> Conc
 
     style Ch1 fill:#2c3e50,color:#ecf0f1
     style Ch2 fill:#34495e,color:#ecf0f1
     style Ch3 fill:#2980b9,color:#fff
     style Ch4 fill:#e74c3c,color:#fff
-    style Ch5 fill:#27ae60,color:#fff
-    style Ch6 fill:#8e44ad,color:#fff
+    style Ch5 fill:#16a085,color:#fff
+    style Ch6 fill:#d35400,color:#fff
+    style Ch7 fill:#27ae60,color:#fff
+    style Ch8 fill:#c0392b,color:#fff
+    style Ch9 fill:#8e44ad,color:#fff
     style Conc fill:#e67e22,color:#fff
 ```
 
@@ -149,60 +155,33 @@ To manage its massive fleet of servers, Google built its own internal systems.
 
 ---
 
-## Chapter 5: The Conductor Takes the Stage (2014-Present)
+## Chapter 5: The Cluster Architecture
 
-Kubernetes was released to the public in 2014. It combines all the historical ideas we've discussed into one powerful system. Its secret weapon is something called the **Control Loop**.
-
-### The Thermostat for Your Software
-
-The best way to understand the Kubernetes control loop is to think about a thermostat in your house.
-1.  You **declare** what you want: "I want the temperature to be 70 degrees." This is your **Desired State**.
-2.  The thermostat constantly **observes** the room's current temperature. This is the **Observed State**.
-3.  It then **reconciles** the difference.
-    *   If the room is 65 degrees, it turns on the heat.
-    *   If the room is 75 degrees, it turns on the A/C.
-    *   If the room is exactly 70 degrees, it does nothing.
-
-It's a simple, continuous loop that is always working to make reality match your desired state.
-
-This is exactly how Kubernetes works. You don't tell Kubernetes *what to do*. You tell it *what you want*.
-*   **You:** "I want 3 copies of my web server running at all times." (Desired State)
-*   **Kubernetes:** (Constantly checking) "I see only 2 copies running because one just crashed." (Observed State)
-*   **Kubernetes:** (Reconciling) "I need to start one new copy to get back to 3."
-
-This is why Kubernetes is called **self-healing**. You don't need to tell it a server failed. The control loop notices the difference between "what you want" and "what you have" and fixes it automatically.
-
-### Etcd: The System's Brain
-
-For this to work, Kubernetes needs a single, ultra-reliable place to store the "Desired State." This is the job of **etcd**. It's the central brain and source of truth for the entire cluster. All decisions and states are recorded in etcd, ensuring that even in a chaotic environment of failing machines, everyone agrees on what the cluster is supposed to be doing.
+With the historical foundations in place, this chapter introduces the anatomy of a Kubernetes cluster: the **Control Plane** (API Server, etcd, Scheduler, Controller Manager) and the **Worker Nodes** (Kubelet, Kube-proxy). A complete "day in the life of a Pod" sequence diagram shows all six components cooperating to bring a single Pod from declaration to running.
 
 ---
 
-## Chapter 6: Teaching Kubernetes New Tricks — Operators and the Extensible Platform
+## Chapter 6: Getting Hands-On
 
-Kubernetes knows how to keep three copies of a web server running, but it doesn't know *how to run a database*. A MySQL cluster needs specific operational knowledge: initialize a primary, add replicas in order, handle failover, run backups. Historically, this required a human expert—treating the database as a **Pet** (from Chapter 4). The question became: what if we could encode that expert's knowledge into software?
+The first practical chapter. Step-by-step installation of **Minikube** and **kubectl** on Mac, Windows, and Linux. Starting a local cluster, writing your first YAML Pod manifest, applying it, inspecting it with `kubectl describe`, forwarding a port to your browser, and cleaning up — all with expected terminal output shown and every field explained.
 
-### Custom Resource Definitions (CRDs): Teaching Kubernetes New Words
+---
 
-Kubernetes ships with built-in resource types like Pods, Services, and Deployments. **CRDs** let you define entirely new resource types—for example, a `MySQLCluster` resource. Once registered, you can use it with the same tools as built-in resources: `kubectl get mysqlclusters`. If Kubernetes is an operating system (Chapter 2), CRDs are like installing new device drivers—they teach it about concepts it didn't know about before.
+## Chapter 7: The Conductor Takes the Stage (2014-Present)
 
-### The Operator Pattern: Encoding Human Knowledge Into Software
+Kubernetes was released to the public in 2014. Its secret weapon is the **Control Loop** — the thermostat of your software. You declare what you want (Desired State), the cluster observes what it has (Observed State), and reconciles the gap. This chapter covers declarative vs. imperative models, the Raft consensus algorithm in etcd, the CAP Theorem, and the etcd Watch mechanism.
 
-An **Operator** combines a CRD with a **Custom Controller**. The controller uses the same reconciliation loop from Chapter 5, but carries domain-specific knowledge. You declare "I want a MySQLCluster with 3 replicas and daily backups" (desired state), and the Operator knows the exact steps: initialize the primary first, set up replication, configure backups. If a replica dies, it doesn't restart blindly—it checks replication lag, resyncs data, and rejoins the cluster properly.
+---
 
-**Key insight:** Operators capture the expertise of a human operator and run it inside the control loop—24/7, tirelessly, at machine speed.
+## Chapter 8: Deploying and Connecting
 
-### The Ecosystem: A Platform for Building Platforms
+The second practical chapter. Real-world Kubernetes patterns: **Deployments** (self-healing, rolling updates, rollbacks), **Services** (ClusterIP / NodePort / LoadBalancer), **Ingress** (single-entry-point routing), and **Storage** (PersistentVolumes and PersistentVolumeClaims). Full YAML manifests and `kubectl` command sequences for each.
 
-The Operator pattern unlocked an entire ecosystem. The **Prometheus Operator** manages monitoring, **cert-manager** automates TLS certificates, and the **etcd Operator** manages the very database Kubernetes depends on. Tools like Operator SDK, Kubebuilder, and OperatorHub made it easy to build, share, and discover Operators. This is what transformed Kubernetes from a container orchestrator into an extensible, API-driven platform.
+---
 
-### Admission Webhooks: The Gatekeepers
+## Chapter 9: Teaching Kubernetes New Tricks — Operators and the Extensible Platform
 
-The API Server can be extended with webhooks that intercept requests before they're stored. **Validating Webhooks** reject bad requests (e.g., Pods without resource limits). **Mutating Webhooks** automatically modify requests (e.g., Istio injecting a sidecar container). If the API Server is the front door (Chapter 4), Admission Webhooks are the security guards—they check IDs and hand out visitor badges before anyone enters.
-
-### Helm: Packaging and Sharing the Knowledge
-
-**Helm** is the package manager for Kubernetes. A **Helm Chart** bundles all the YAML manifests, CRDs, and configuration needed to deploy a complex application. You can install an entire Prometheus stack with a single `helm install` command, customize it through configuration values, and roll back if an upgrade goes wrong. If Kubernetes is an operating system, Helm is its app store—just as `apt` or `brew` let you install new software, Helm lets you install new capabilities into the Kubernetes platform.
+Kubernetes knows how to run containers, but not *how to run a database*. This chapter covers the extensibility stack: **CRDs** teach Kubernetes new vocabulary, **Operators** encode domain-specific knowledge into the control loop, **Admission Webhooks** act as gatekeepers for every API request, and **Helm** packages it all into distributable, versionable charts.
 
 ---
 
